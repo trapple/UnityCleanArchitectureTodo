@@ -87,7 +87,7 @@ namespace UnityCleanArchitectureTodo.Presentation.ViewModels
         /// <param name="taskId">対象タスクID</param>
         public async UniTask ToggleCompleteAsync(string taskId)
         {
-            // 空実装 - TDD Red Phase
+            await _todoUseCase.CompleteAsync(taskId);
         }
 
         /// <summary>
