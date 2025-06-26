@@ -5,7 +5,8 @@
         "UniTask",
         "UnityCleanArchitectureTodo.App",
         "UnityCleanArchitectureTodo.Domain",
-        "R3.Unity"
+        "R3.Unity",
+        "VContainer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

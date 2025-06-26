@@ -95,8 +95,14 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
   - ✅ LoadingState管理機能（遅延テスト付き）
 
 ### 4.2 その他のPresentation層コンポーネント
-- ⏳ **Next**: TodoListPresenter実装
-- ⬜ TodoListView実装（E2Eテスト対象）
+- ✅ TodoListPresenter実装完了🎉
+  - ✅ VContainer EntryPointパターン（IStartable, IDisposable）
+  - ✅ ViewModelとUseCaseの橋渡し機能
+  - ✅ ReactiveCommandバインディング
+  - ✅ CRUD操作の完全実装（Create, Toggle, Delete, Load）
+  - ✅ エラーハンドリングとリソース管理
+  - ✅ 自動データリロード機能
+- ⏳ **Next**: TodoListView実装（E2Eテスト対象）
 - ⬜ TodoItemView実装（E2Eテスト対象）
 
 ## 5. DI設定の実装
@@ -113,10 +119,10 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 ---
 
 ## 現在の状況
-- **現在地**: 4.2 TodoListPresenter実装準備（Presentation層）
-- **次のタスク**: TodoListPresenter実装（MVVMパターン完成）
-- **TDDフェーズ**: TodoListViewModel完全完了🎉 → Presenter層実装開始
-- **実装済み**: Domain層、App層、Infra層、ViewModel層の完全実装（7/7テスト成功）
+- **現在地**: 4.2 TodoListView実装準備（Presentation層UI構築）
+- **次のタスク**: TodoListView実装（Unity UI + E2Eテスト）
+- **TDDフェーズ**: MVVM完全完了🎉 → UI層実装 + DI設定開始
+- **実装済み**: Domain層、App層、Infra層、MVVM層（ViewModel + Presenter）の完全実装
 
 ## 凡例
 - ✅ 完了
