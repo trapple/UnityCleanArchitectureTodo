@@ -147,27 +147,73 @@ public interface ITodoRepository
 
 #### 4.2.1 UseCase設計
 
-**UseCase一覧**
-- `GetAllTodosUseCase`: 全タスク取得
-- `CreateTodoUseCase`: タスク作成
-- `UpdateTodoUseCase`: タスク更新
-- `CompleteTodoUseCase`: タスク完了切り替え
-- `DeleteTodoUseCase`: タスク削除
+**統合型UseCase設計**
+- `TodoUseCase`: 全Todo操作を統合（推奨設計パターン）
 
-**UseCase実装例**
+**TodoUseCase実装**
 ```csharp
-public class GetAllTodosUseCase
+public class TodoUseCase
 {
     private readonly ITodoRepository _repository;
     
-    public GetAllTodosUseCase(ITodoRepository repository)
+    public TodoUseCase(ITodoRepository repository)
     {
         _repository = repository;
     }
     
-    public async UniTask<IReadOnlyList<TodoTask>> ExecuteAsync()
+    // 全タスク取得
+    public async UniTask<IReadOnlyList<TodoTask>> GetAllAsync()
     {
         return await _repository.GetAllAsync();
+    }
+    
+    // タスク作成
+    public async UniTask CreateAsync(string title, string description)
+    {
+        var task = new TodoTask(title, description);
+        await _repository.SaveAsync(task);
+    }
+    
+    // 完了状態切り替え
+    public async UniTask ToggleCompleteAsync(string id)
+    {
+        var task = await _repository.GetByIdAsync(id);
+        if (task != null)
+        {
+            if (task.IsCompleted)
+                task.Uncomplete();
+            else
+                task.Complete();
+            await _repository.SaveAsync(task);
+        }
+    }
+    
+    // タイトル更新
+    public async UniTask UpdateTitleAsync(string id, string newTitle)
+    {
+        var task = await _repository.GetByIdAsync(id);
+        if (task != null)
+        {
+            task.UpdateTitle(newTitle);
+            await _repository.SaveAsync(task);
+        }
+    }
+    
+    // 説明更新
+    public async UniTask UpdateDescriptionAsync(string id, string newDescription)
+    {
+        var task = await _repository.GetByIdAsync(id);
+        if (task != null)
+        {
+            task.UpdateDescription(newDescription);
+            await _repository.SaveAsync(task);
+        }
+    }
+    
+    // タスク削除
+    public async UniTask DeleteAsync(string id)
+    {
+        await _repository.DeleteAsync(id);
     }
 }
 ```
@@ -331,27 +377,16 @@ public class TodoListViewModel : IDisposable
 public class TodoListPresenter : IStartable, IDisposable
 {
     private readonly TodoListViewModel _viewModel;
+    private readonly TodoUseCase _todoUseCase;
     private readonly CompositeDisposable _disposables;
-    
-    private readonly GetAllTodosUseCase _getAllTodosUseCase;
-    private readonly CreateTodoUseCase _createTodoUseCase;
-    private readonly CompleteTodoUseCase _completeTodoUseCase;
-    private readonly DeleteTodoUseCase _deleteTodoUseCase;
     
     // Constructor Injection
     public TodoListPresenter(
         TodoListViewModel viewModel,
-        GetAllTodosUseCase getAllTodosUseCase,
-        CreateTodoUseCase createTodoUseCase,
-        CompleteTodoUseCase completeTodoUseCase,
-        DeleteTodoUseCase deleteTodoUseCase)
+        TodoUseCase todoUseCase)
     {
         _viewModel = viewModel;
-        _getAllTodosUseCase = getAllTodosUseCase;
-        _createTodoUseCase = createTodoUseCase;
-        _completeTodoUseCase = completeTodoUseCase;
-        _deleteTodoUseCase = deleteTodoUseCase;
-        
+        _todoUseCase = todoUseCase;
         _disposables = new CompositeDisposable();
     }
     
@@ -380,20 +415,20 @@ public class TodoListPresenter : IStartable, IDisposable
         var title = _viewModel.NewTodoTitle.Value;
         var description = _viewModel.NewTodoDescription.Value;
         
-        await _createTodoUseCase.ExecuteAsync(title, description);
+        await _todoUseCase.CreateAsync(title, description);
         _viewModel.ClearNewTodoInputs();
         await LoadTodosAsync();
     }
     
     private async void OnDeleteTodo(string id)
     {
-        await _deleteTodoUseCase.ExecuteAsync(id);
+        await _todoUseCase.DeleteAsync(id);
         await LoadTodosAsync();
     }
     
     private async void OnToggleComplete(string id)
     {
-        await _completeTodoUseCase.ExecuteAsync(id);
+        await _todoUseCase.ToggleCompleteAsync(id);
         await LoadTodosAsync();
     }
     
@@ -402,7 +437,7 @@ public class TodoListPresenter : IStartable, IDisposable
         _viewModel.SetLoading(true);
         try
         {
-            var todos = await _getAllTodosUseCase.ExecuteAsync();
+            var todos = await _todoUseCase.GetAllAsync();
             _viewModel.SetTodos(todos);
         }
         finally
@@ -522,31 +557,30 @@ public class TodoItemView : MonoBehaviour
 
 #### 4.5.1 VContainer LifetimeScope
 
-**TodoAppLifetimeScope**
+**RootLifetimeScope**
 ```csharp
-public class TodoAppLifetimeScope : LifetimeScope
+public class RootLifetimeScope : LifetimeScope
 {
     protected override void Configure(IContainerBuilder builder)
     {
-        // Repository
-        builder.Register<ITodoRepository, CsvTodoRepository>(Lifetime.Singleton)
-            .WithParameter("filePath", Path.Combine(Application.persistentDataPath, "todos.csv"));
+        // CSV ファイルパスの決定
+        var csvFilePath = GetCsvFilePath();
         
-        // UseCases
-        builder.Register<GetAllTodosUseCase>(Lifetime.Transient);
-        builder.Register<CreateTodoUseCase>(Lifetime.Transient);
-        builder.Register<UpdateTodoUseCase>(Lifetime.Transient);
-        builder.Register<CompleteTodoUseCase>(Lifetime.Transient);
-        builder.Register<DeleteTodoUseCase>(Lifetime.Transient);
+        // Infrastructure層
+        builder.Register<ITodoRepository>(_ => new CsvTodoRepository(csvFilePath), Lifetime.Singleton);
         
-        // ViewModel
+        // Application層 - 統合型UseCase
+        builder.Register<TodoUseCase>(Lifetime.Transient);
+        
+        // Presentation層
         builder.Register<TodoListViewModel>(Lifetime.Singleton);
-        
-        // Presenters (EntryPoint)
         builder.RegisterEntryPoint<TodoListPresenter>();
-        
-        // Views
         builder.RegisterComponentInHierarchy<TodoListView>();
+    }
+    
+    private string GetCsvFilePath()
+    {
+        return Path.Combine(Application.persistentDataPath, _csvFileName);
     }
 }
 ```
@@ -652,11 +686,13 @@ public async Task GetAllTodosUseCase_Execute_ShouldReturnAllTodos()
 }
 ```
 
-**2.2 各UseCase のテストと実装**
-- CreateTodoUseCase
-- CompleteTodoUseCase  
-- DeleteTodoUseCase
-- UpdateTodoUseCase
+**2.2 TodoUseCase のテストと実装（統合型）**
+- GetAllAsync
+- CreateAsync
+- ToggleCompleteAsync
+- UpdateTitleAsync
+- UpdateDescriptionAsync
+- DeleteAsync
 
 #### 3. **Infra層の実装（必要に応じてテスト）**
 
@@ -757,22 +793,28 @@ public class TodoTaskTest
 
 #### 7.3.2 Unit Test（App層）
 ```csharp
-// GetAllTodosUseCaseTest.cs
+// TodoUseCaseTest.cs
 [TestFixture]
-public class GetAllTodosUseCaseTest
+public class TodoUseCaseTest
 {
-    private Mock<ITodoRepository> _mockRepository;
-    private GetAllTodosUseCase _useCase;
+    private MockTodoRepository _mockRepository;
+    private TodoUseCase _useCase;
     
     [SetUp]
     public void SetUp()
     {
-        _mockRepository = new Mock<ITodoRepository>();
-        _useCase = new GetAllTodosUseCase(_mockRepository.Object);
+        _mockRepository = new MockTodoRepository();
+        _useCase = new TodoUseCase(_mockRepository);
     }
     
     [Test]
-    public async Task ExecuteAsync_ShouldReturnRepositoryResult()
+    public async Task GetAllAsync_ShouldReturnRepositoryResult()
+    
+    [Test]
+    public async Task CreateAsync_ShouldCreateAndSaveTask()
+    
+    [Test]
+    public async Task ToggleCompleteAsync_ShouldToggleTaskCompletion()
 }
 ```
 

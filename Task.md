@@ -116,8 +116,14 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 
 ## 5. DI設定の実装
 
-- ⬜ TodoAppLifetimeScope実装
-- ⬜ 依存関係の配線
+- ✅ RootLifetimeScope実装完了🎉
+  - ✅ VContainer LifetimeScope設定
+  - ✅ Clean Architecture全層の依存関係配線
+  - ✅ Repository層：ITodoRepository → CsvTodoRepository (Singleton)
+  - ✅ Application層：TodoUseCase (Transient)
+  - ✅ Presentation層：ViewModel (Singleton), Presenter (EntryPoint), View (Hierarchy)
+  - ✅ CSVファイルパス管理（本番/デバッグ切り替え）
+  - ✅ デバッグ機能（DI検証、ファイルステータス確認、リセット）
 
 ## 6. UI構築
 
@@ -128,10 +134,10 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 ---
 
 ## 現在の状況
-- **現在地**: 5. DI設定の実装準備（VContainer LifetimeScope）
-- **次のタスク**: TodoAppLifetimeScope実装（依存関係配線）
-- **TDDフェーズ**: Presentation層完全完了🎉 → DI設定 + Scene構築
-- **実装済み**: Clean Architecture全層完成（Domain, App, Infra, Presentation: MVVM + UI）
+- **現在地**: 5. DI設定の実装 → 完了🎉
+- **次のタスク**: 6. UI構築（Scene設定・Prefab作成・UI配置）
+- **TDDフェーズ**: Clean Architecture全層完成🎉 → Scene構築・UI配置
+- **実装済み**: Clean Architecture全層完成（Domain, App, Infra, Presentation: MVVM + UI + DI）
 
 ## 凡例
 - ✅ 完了
