@@ -18,7 +18,7 @@ namespace UnityCleanArchitectureTodo.Domain.Entities
         public DateTime? CompletedAt { get; private set; }
 
         /// <summary>
-        /// TodoTaskのコンストラクタ
+        /// TodoTaskのコンストラクタ（新規作成用）
         /// TDD Refactor Phase: ID自動生成による改善
         /// </summary>
         /// <param name="title">タスクタイトル</param>
@@ -40,6 +40,38 @@ namespace UnityCleanArchitectureTodo.Domain.Entities
             IsCompleted = false;
             CreatedAt = _timeProvider.GetUtcNow().DateTime;
             CompletedAt = null;
+        }
+
+        /// <summary>
+        /// TodoTaskのコンストラクタ（復元用）
+        /// CSVファイルや外部データソースからの復元時に使用
+        /// </summary>
+        /// <param name="id">タスクID</param>
+        /// <param name="title">タスクタイトル</param>
+        /// <param name="description">タスク説明</param>
+        /// <param name="isCompleted">完了状態</param>
+        /// <param name="createdAt">作成日時（nullの場合は現在時刻）</param>
+        /// <param name="completedAt">完了日時</param>
+        /// <param name="timeProvider">時刻プロバイダー（テスト可能性のため）</param>
+        public TodoTask(string id, string title, string description, bool isCompleted, 
+            DateTime? createdAt = null, DateTime? completedAt = null, TimeProvider timeProvider = null)
+        {
+            // バリデーション
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("タイトルは必須です", nameof(title));
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentException("IDは必須です", nameof(id));
+
+            // TimeProvider設定（nullの場合はデフォルト）
+            _timeProvider = timeProvider ?? TimeProvider.System;
+
+            // プロパティ設定
+            Id = id;
+            Title = title;
+            Description = description ?? "";
+            IsCompleted = isCompleted;
+            CreatedAt = createdAt ?? _timeProvider.GetUtcNow().DateTime;
+            CompletedAt = completedAt;
         }
 
         /// <summary>

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Cysharp.Threading.Tasks;
 using UnityCleanArchitectureTodo.Domain.Entities;
 using UnityCleanArchitectureTodo.Domain.Repositories;
@@ -137,33 +136,8 @@ namespace UnityCleanArchitectureTodo.Infra.Repositories
                 ? null 
                 : DateTime.Parse(completedAtStr, null, DateTimeStyles.RoundtripKind);
 
-            // TodoTaskを作成（仮のタイトルで作成してから必要なプロパティを設定）
-            var task = new TodoTask(title, description);
-            
-            // リフレクションを使用してプライベートフィールドを設定
-            var taskType = typeof(TodoTask);
-            
-            // Idプロパティを設定
-            var idField = taskType.GetField("<Id>k__BackingField", 
-                BindingFlags.NonPublic | BindingFlags.Instance);
-            idField?.SetValue(task, id);
-            
-            // CreatedAtプロパティを設定
-            var createdAtField = taskType.GetField("<CreatedAt>k__BackingField", 
-                BindingFlags.NonPublic | BindingFlags.Instance);
-            createdAtField?.SetValue(task, createdAt);
-            
-            // CompletedAtプロパティを設定
-            var completedAtField = taskType.GetField("<CompletedAt>k__BackingField", 
-                BindingFlags.NonPublic | BindingFlags.Instance);
-            completedAtField?.SetValue(task, completedAt);
-            
-            // IsCompletedプロパティを設定
-            var isCompletedField = taskType.GetField("<IsCompleted>k__BackingField", 
-                BindingFlags.NonPublic | BindingFlags.Instance);
-            isCompletedField?.SetValue(task, isCompleted);
-
-            return task;
+            // 復元用コンストラクタを使用してTodoTaskを作成
+            return new TodoTask(id, title, description, isCompleted, createdAt, completedAt);
         }
     }
 }
