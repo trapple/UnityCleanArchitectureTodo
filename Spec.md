@@ -58,7 +58,7 @@ Assets/Scripts/
 ├── App/                   # アプリケーションレイヤー
 │   ├── UseCases/          # ユースケース
 │   └── Services/         # アプリケーションサービス
-├── Infrastructure/         # インフラレイヤー
+├── Infra/                 # インフラレイヤー
 │   ├── Repositories/      # リポジトリ実装
 │   └── DataSources/       # データソース
 └── Presentation/          # プレゼンテーションレイヤー
@@ -70,12 +70,12 @@ Assets/Scripts/
 ### 3.2 依存関係の流れ
 
 ```
-Presentation → Application → Domain ← Infrastructure
+Presentation → App → Domain ← Infra
 ```
 
 - 外側のレイヤーは内側のレイヤーに依存
 - Domainレイヤーは他のレイヤーに依存しない
-- Infrastructureレイヤーは依存関係逆転の原則によってDomainレイヤーのインターフェースを実装
+- Infraレイヤーは依存関係逆転の原則によってDomainレイヤーのインターフェースを実装
 
 ## 4. 詳細設計
 
@@ -165,7 +165,7 @@ public class GetAllTodosUseCase : IGetAllTodosUseCase
 }
 ```
 
-### 4.3 Infrastructureレイヤー
+### 4.3 Infraレイヤー（Infrastructureレイヤー）
 
 #### 4.3.1 Repository実装
 
@@ -387,7 +387,7 @@ public static class CsvHelper
    - 各UseCase Interface
    - 各UseCase実装
 
-3. **Infrastructure層の実装**
+3. **Infra層の実装**
    - IDataSource Interface
    - FileDataSource実装
    - CsvTodoRepository実装
