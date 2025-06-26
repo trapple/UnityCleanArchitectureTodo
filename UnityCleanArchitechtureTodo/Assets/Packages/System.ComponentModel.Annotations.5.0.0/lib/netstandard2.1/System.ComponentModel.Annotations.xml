@@ -591,7 +591,8 @@
                 <see cref="P:System.ComponentModel.DataAnnotations.DisplayFormatAttribute.NullDisplayText"/>
                 properties are set, but a public static property with a name matching the
                 <see cref="P:System.ComponentModel.DataAnnotations.DisplayFormatAttribute.NullDisplayText"/>
-                value cannot be found on the<see
+                value cannot be found on the
+                <see
                         cref="P:System.ComponentModel.DataAnnotations.DisplayFormatAttribute.NullDisplayTextResourceType"/>
                 .
             </exception>
@@ -653,7 +654,8 @@
             </returns>
         </member>
         <member name="P:System.ComponentModel.DataAnnotations.DisplayFormatAttribute.NullDisplayText">
-            <summary>Gets or sets the text that is displayed for a field when the field's value is<see langword="null"/>
+            <summary>Gets or sets the text that is displayed for a field when the field's value is
+                <see langword="null"/>
                 .
             </summary>
             <returns>The text that is displayed for a field when the field's value is<see langword="null"/>. The default
@@ -1765,7 +1767,8 @@
             </exception>
             <exception cref="T:System.ArgumentException">
                 <paramref name="instance"/>
-                doesn't match the<see cref="P:System.ComponentModel.DataAnnotations.ValidationContext.ObjectInstance"/>
+                doesn't match the
+                <see cref="P:System.ComponentModel.DataAnnotations.ValidationContext.ObjectInstance"/>
                 on<paramref name="validationContext"/>.
             </exception>
             <returns>
@@ -1790,7 +1793,8 @@
             </exception>
             <exception cref="T:System.ArgumentException">
                 <paramref name="instance"/>
-                doesn't match the<see cref="P:System.ComponentModel.DataAnnotations.ValidationContext.ObjectInstance"/>
+                doesn't match the
+                <see cref="P:System.ComponentModel.DataAnnotations.ValidationContext.ObjectInstance"/>
                 on<paramref name="validationContext"/>.
             </exception>
             <returns>

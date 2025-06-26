@@ -6,6 +6,7 @@
     "UnityEditor.TestRunner",
     "Domain",
     "UnityCleanArchitectureTodo.App",
+    "UnityCleanArchitectureTodo.Infra",
     "UniTask",
     "R3.Unity"
   ],

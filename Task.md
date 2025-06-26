@@ -52,15 +52,21 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 
 ## 3. Infra層の実装（必要に応じてテスト）
 
-### 3.1 CsvTodoRepository のテスト
-- ⬜ CsvTodoRepositoryTest.cs作成
-- ⬜ SaveAsync_NewTask_ShouldAddToFile テスト
-- ⬜ GetAllAsync_EmptyFile_ShouldReturnEmptyList テスト
-- ⬜ その他のRepository操作テスト
+### 3.1 CsvTodoRepository のテスト（TDD Red Phase）
+- ✅ CsvTodoRepositoryTest.cs作成（10個のテストケース）
+  - ✅ GetAllAsync_FileNotExists_ShouldReturnEmptyList テスト
+  - ✅ GetAllAsync_EmptyFile_ShouldReturnEmptyList テスト
+  - ✅ GetAllAsync_WithData_ShouldReturnTasks テスト
+  - ✅ GetByIdAsync_ExistingTask_ShouldReturnTask テスト
+  - ✅ GetByIdAsync_NonExistingTask_ShouldReturnNull テスト
+  - ✅ SaveAsync_NewTask_ShouldAddToFile テスト
+  - ✅ SaveAsync_ExistingTask_ShouldUpdateInFile テスト
+  - ✅ DeleteAsync_ExistingTask_ShouldRemoveFromFile テスト
+  - ✅ DeleteAsync_NonExistingTask_ShouldNotThrow テスト
 
 ### 3.2 CsvTodoRepository の実装
-- ⬜ CsvTodoRepository.cs作成
-- ⬜ CSVファイル操作ロジック実装
+- ✅ CsvTodoRepository.cs作成（空実装 - TDD Red Phase）
+- ⏳ **Next**: CSVファイル操作ロジック実装（TDD Green Phase）
 - ⬜ エラーハンドリング実装
 
 ## 4. Presentation層の実装（UnitTestなし）
@@ -84,9 +90,9 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 ---
 
 ## 現在の状況
-- **現在地**: 2.1 TodoUseCase の実装（完了）- アクター単位統合アプローチ採用
-- **次のタスク**: 3.1 CsvTodoRepository のテスト作成・実装
-- **TDDフェーズ**: App層完了 → Infra層TDD開始
+- **現在地**: 3.1 CsvTodoRepository のテスト作成・空実装（TDD Red Phase完了）
+- **次のタスク**: 3.2 CsvTodoRepository のCSVファイル操作ロジック実装（TDD Green Phase）
+- **TDDフェーズ**: Infra層TDD継続中（Red → Green移行）
 
 ## 凡例
 - ✅ 完了
