@@ -60,10 +60,27 @@ namespace UnityCleanArchitectureTodo.Infra.Repositories
         /// Todoタスクを保存する（新規作成または更新）
         /// </summary>
         /// <param name="task">保存対象のタスク</param>
-        public UniTask SaveAsync(TodoTask task)
+        public async UniTask SaveAsync(TodoTask task)
         {
-            // TDD Red Phase - まず失敗する実装
-            throw new System.NotImplementedException();
+            // 既存のタスクリストを取得
+            var existingTasks = (await GetAllAsync()).ToList();
+            
+            // 同じIDのタスクが存在するかチェック
+            var existingIndex = existingTasks.FindIndex(t => t.Id == task.Id);
+            
+            if (existingIndex >= 0)
+            {
+                // 既存タスクを更新
+                existingTasks[existingIndex] = task;
+            }
+            else
+            {
+                // 新規タスクを追加
+                existingTasks.Add(task);
+            }
+            
+            // CSVファイルに書き込み
+            await WriteCsvFileAsync(existingTasks);
         }
 
         /// <summary>
@@ -139,6 +156,30 @@ namespace UnityCleanArchitectureTodo.Infra.Repositories
 
             // 復元用コンストラクタを使用してTodoTaskを作成
             return new TodoTask(id, title, description, isCompleted, createdAt, completedAt);
+        }
+
+        /// <summary>
+        /// タスクリストをCSVファイルに書き込む
+        /// </summary>
+        /// <param name="tasks">書き込み対象のタスクリスト</param>
+        private async UniTask WriteCsvFileAsync(IList<TodoTask> tasks)
+        {
+            var csvLines = new List<string>();
+            
+            // ヘッダー行を追加
+            csvLines.Add("Id,Title,Description,IsCompleted,CreatedAt,CompletedAt");
+            
+            // 各タスクをCSV行に変換
+            foreach (var task in tasks)
+            {
+                var completedAtStr = task.CompletedAt?.ToString("O") ?? "";
+                var csvLine = $"{task.Id},{task.Title},{task.Description},{task.IsCompleted},{task.CreatedAt:O},{completedAtStr}";
+                csvLines.Add(csvLine);
+            }
+            
+            // ファイルに書き込み
+            var csvContent = string.Join("\n", csvLines);
+            await File.WriteAllTextAsync(_filePath, csvContent);
         }
     }
 }
