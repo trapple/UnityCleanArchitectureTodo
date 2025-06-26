@@ -1,8 +1,10 @@
 {
-  "name": "Domain",
-  "rootNamespace": "UnityCleanArchitectureTodo.Domain",
+  "name": "UnityCleanArchitectureTodo.App",
+  "rootNamespace": "UnityCleanArchitectureTodo.App",
   "references": [
-    "UniTask"
+    "Domain",
+    "UniTask",
+    "R3"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

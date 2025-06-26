@@ -9,7 +9,7 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
     public class MockTimeProvider : TimeProvider
     {
         private DateTimeOffset _utcNow;
-        
+
         /// <summary>
         /// モックTimeProviderのコンストラクタ
         /// </summary>
@@ -18,7 +18,7 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
         {
             _utcNow = utcNow;
         }
-        
+
         /// <summary>
         /// 固定されたUTC時刻を返す
         /// </summary>
@@ -26,7 +26,7 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
         {
             return _utcNow;
         }
-        
+
         /// <summary>
         /// モックの時刻を設定する
         /// </summary>
@@ -35,7 +35,7 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
         {
             _utcNow = utcNow;
         }
-        
+
         /// <summary>
         /// DateTime版のSetUtcNowメソッド（利便性のため）
         /// </summary>

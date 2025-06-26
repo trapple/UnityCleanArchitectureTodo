@@ -33,15 +33,22 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 
 ## 2. App層の実装（TDD）
 
-### 2.1 GetAllTodosUseCase のテスト
-- ⏳ **Next**: GetAllTodosUseCaseTest.cs作成
-- ⬜ ExecuteAsync_ShouldReturnAllTodos テスト
-
-### 2.2 各UseCase のテストと実装
-- ⬜ CreateTodoUseCaseTest.cs作成・実装
-- ⬜ CompleteTodoUseCaseTest.cs作成・実装
-- ⬜ DeleteTodoUseCaseTest.cs作成・実装
-- ⬜ UpdateTodoUseCaseTest.cs作成・実装
+### 2.1 TodoUseCase の実装（アクター単位統合）
+- ✅ TodoUseCaseTest.cs作成（全メソッドのテスト）
+  - ✅ GetAllAsync_ShouldReturnAllTodos テスト
+  - ✅ GetAllAsync_EmptyRepository_ShouldReturnEmptyList テスト
+  - ✅ CreateAsync_ShouldCreateAndSaveTask テスト
+  - ✅ CompleteAsync_ShouldToggleTaskCompletion テスト
+  - ✅ UpdateTitleAsync_ShouldUpdateTaskTitle テスト
+  - ✅ UpdateDescriptionAsync_ShouldUpdateTaskDescription テスト
+  - ✅ DeleteAsync_ShouldCallRepositoryDelete テスト
+- ✅ TodoUseCase.cs実装（全メソッド統合）
+  - ✅ GetAllAsync() - 全タスク取得
+  - ✅ CreateAsync() - タスク作成
+  - ✅ CompleteAsync() - 完了切り替え
+  - ✅ UpdateTitleAsync() - タイトル更新
+  - ✅ UpdateDescriptionAsync() - 説明更新
+  - ✅ DeleteAsync() - タスク削除
 
 ## 3. Infra層の実装（必要に応じてテスト）
 
@@ -77,9 +84,9 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 ---
 
 ## 現在の状況
-- **現在地**: 1.3 ITodoRepository Interface の定義（完了）
-- **次のタスク**: 2.1 GetAllTodosUseCase のテスト作成
-- **TDDフェーズ**: Domain層完了 → App層TDD開始
+- **現在地**: 2.1 TodoUseCase の実装（完了）- アクター単位統合アプローチ採用
+- **次のタスク**: 3.1 CsvTodoRepository のテスト作成・実装
+- **TDDフェーズ**: App層完了 → Infra層TDD開始
 
 ## 凡例
 - ✅ 完了

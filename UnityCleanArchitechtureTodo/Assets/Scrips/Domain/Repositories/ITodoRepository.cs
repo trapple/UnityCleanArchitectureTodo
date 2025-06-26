@@ -16,21 +16,21 @@ namespace UnityCleanArchitectureTodo.Domain.Repositories
         /// </summary>
         /// <returns>Todoタスクの読み取り専用リスト</returns>
         UniTask<IReadOnlyList<TodoTask>> GetAllAsync();
-        
+
         /// <summary>
         /// 指定されたIDのTodoタスクを取得する
         /// </summary>
         /// <param name="id">検索対象のタスクID</param>
         /// <returns>見つかったタスク、存在しない場合はnull</returns>
         UniTask<TodoTask> GetByIdAsync(string id);
-        
+
         /// <summary>
         /// Todoタスクを保存する（新規作成または更新）
         /// </summary>
         /// <param name="task">保存対象のタスク</param>
         /// <returns>非同期処理</returns>
         UniTask SaveAsync(TodoTask task);
-        
+
         /// <summary>
         /// 指定されたIDのTodoタスクを削除する
         /// </summary>

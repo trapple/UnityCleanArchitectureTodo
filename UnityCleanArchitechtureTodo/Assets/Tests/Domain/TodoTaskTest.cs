@@ -26,13 +26,13 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
             // Arrange
             var fixedTime = new DateTime(2024, 1, 1, 12, 0, 0);
             var mockTime = new MockTimeProvider(fixedTime);
-            
+
             var title = "テストタスク";
             var description = "テスト用の説明";
-            
+
             // Act
             var task = new TodoTask(title, description, mockTime);
-            
+
             // Assert
             Assert.IsNotNull(task.Id);
             Assert.IsNotEmpty(task.Id);
@@ -42,7 +42,7 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
             Assert.AreEqual(fixedTime, task.CreatedAt);
             Assert.IsNull(task.CompletedAt);
         }
-        
+
         /// <summary>
         /// テスト対象: TodoTask.Complete()メソッド
         /// 期待結果: タスクが完了状態に変わる
@@ -55,21 +55,21 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
             // Arrange
             var createdTime = new DateTime(2024, 1, 1, 12, 0, 0);
             var completedTime = new DateTime(2024, 1, 1, 14, 30, 0);
-            
+
             var mockTime = new MockTimeProvider(createdTime);
             var task = new TodoTask("テストタスク", "説明", mockTime);
-            
+
             // Complete時刻を2時間30分後に設定
             mockTime.SetUtcNow(completedTime);
-            
+
             // Act
             task.Complete();
-            
+
             // Assert
             Assert.IsTrue(task.IsCompleted);
             Assert.AreEqual(completedTime, task.CompletedAt);
         }
-        
+
         /// <summary>
         /// テスト対象: TodoTask.Uncomplete()メソッド
         /// 期待結果: 完了状態のタスクが未完了状態に戻る
@@ -82,21 +82,21 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
             // Arrange
             var createdTime = new DateTime(2024, 1, 1, 12, 0, 0);
             var completedTime = new DateTime(2024, 1, 1, 14, 30, 0);
-            
+
             var mockTime = new MockTimeProvider(createdTime);
             var task = new TodoTask("テストタスク", "説明", mockTime);
-            
+
             mockTime.SetUtcNow(completedTime);
             task.Complete();
-            
+
             // Act  
             task.Uncomplete();
-            
+
             // Assert
             Assert.IsFalse(task.IsCompleted);
             Assert.IsNull(task.CompletedAt);
         }
-        
+
         /// <summary>
         /// テスト対象: TodoTask.UpdateTitle()メソッド
         /// 期待結果: タイトルが正しく更新される
@@ -109,14 +109,14 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
             var mockTime = new MockTimeProvider(DateTime.Now);
             var task = new TodoTask("元のタイトル", "説明", mockTime);
             var newTitle = "新しいタイトル";
-            
+
             // Act
             task.UpdateTitle(newTitle);
-            
+
             // Assert
             Assert.AreEqual(newTitle, task.Title);
         }
-        
+
         /// <summary>
         /// テスト対象: TodoTask.UpdateTitle()メソッドのバリデーション
         /// 期待結果: 無効なタイトルでArgumentExceptionが発生
@@ -130,13 +130,13 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
             // Arrange
             var mockTime = new MockTimeProvider(DateTime.Now);
             var task = new TodoTask("タイトル", "説明", mockTime);
-            
+
             // Act & Assert
             Assert.Throws<ArgumentException>(() => task.UpdateTitle(null));
             Assert.Throws<ArgumentException>(() => task.UpdateTitle(""));
             Assert.Throws<ArgumentException>(() => task.UpdateTitle("   "));
         }
-        
+
         /// <summary>
         /// テスト対象: TodoTask.UpdateDescription()メソッド
         /// 期待結果: 説明が正しく更新される
@@ -150,14 +150,14 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
             var mockTime = new MockTimeProvider(DateTime.Now);
             var task = new TodoTask("タイトル", "元の説明", mockTime);
             var newDescription = "新しい説明";
-            
+
             // Act
             task.UpdateDescription(newDescription);
-            
+
             // Assert
             Assert.AreEqual(newDescription, task.Description);
         }
-        
+
         /// <summary>
         /// テスト対象: TodoTask.GenerateNewId()静的メソッド
         /// 期待結果: 一意のIDが生成される
@@ -171,7 +171,7 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
             // Act
             var id1 = TodoTask.GenerateNewId();
             var id2 = TodoTask.GenerateNewId();
-            
+
             // Assert
             Assert.IsNotNull(id1);
             Assert.IsNotEmpty(id1);
