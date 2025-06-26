@@ -7,6 +7,13 @@
       "dependencies": {},
       "hash": "7c0f199fe0d3fc528024488ccd671e6c7b27745b"
     },
+    "com.github-glitchenzo.nugetforunity": {
+      "version": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity#v4.4.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "f8f1902ebec77284fd4ac83d043e0ef664d31831"
+    },
     "com.unity.collab-proxy": {
       "version": "2.8.2",
       "depth": 0,
