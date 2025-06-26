@@ -1,0 +1,16 @@
+{
+    "name": "UnityCleanArchitectureTodo.Tests.TestUtils",
+    "rootNamespace": "UnityCleanArchitectureTodo.Tests.TestUtils",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Microsoft.Bcl.TimeProvider.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

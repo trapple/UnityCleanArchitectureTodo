@@ -5,7 +5,7 @@ using NUnit.Framework;
 using Cysharp.Threading.Tasks;
 using UnityCleanArchitectureTodo.Domain.Entities;
 using UnityCleanArchitectureTodo.Infra.Repositories;
-using UnityCleanArchitectureTodo.Tests.Domain;
+using UnityCleanArchitectureTodo.Tests.TestUtils;
 using UnityEngine.TestTools;
 
 namespace UnityCleanArchitectureTodo.Tests.Infra.Repositories

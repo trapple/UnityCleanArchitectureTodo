@@ -1,6 +1,7 @@
 using System;
 using NUnit.Framework;
 using UnityCleanArchitectureTodo.Domain.Entities;
+using UnityCleanArchitectureTodo.Tests.TestUtils;
 
 namespace UnityCleanArchitectureTodo.Tests.Domain
 {

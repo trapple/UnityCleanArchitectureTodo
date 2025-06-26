@@ -1,6 +1,6 @@
 using System;
 
-namespace UnityCleanArchitectureTodo.Tests.Domain
+namespace UnityCleanArchitectureTodo.Tests.TestUtils
 {
     /// <summary>
     /// テスト用のTimeProviderモック

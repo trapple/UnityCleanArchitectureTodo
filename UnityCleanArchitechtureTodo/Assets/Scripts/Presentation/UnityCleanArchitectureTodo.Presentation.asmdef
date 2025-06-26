@@ -1,0 +1,19 @@
+{
+    "name": "UnityCleanArchitectureTodo.Presentation",
+    "rootNamespace": "UnityCleanArchitectureTodo.Presentation",
+    "references": [
+        "UniTask",
+        "UnityCleanArchitectureTodo.App",
+        "UnityCleanArchitectureTodo.Domain",
+        "R3.Unity"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
