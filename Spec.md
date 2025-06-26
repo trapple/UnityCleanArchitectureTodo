@@ -246,19 +246,39 @@ public class CsvTodoRepository : ITodoRepository
 
 **TodoListPresenter**
 ```csharp
-public class TodoListPresenter : MonoBehaviour
+public class TodoListPresenter : IStartable, IDisposable
 {
     private readonly ReactiveProperty<IReadOnlyList<TodoTask>> _todos;
     private readonly ReactiveProperty<bool> _isLoading;
+    private readonly CompositeDisposable _disposables;
     
     private readonly GetAllTodosUseCase _getAllTodosUseCase;
     private readonly CreateTodoUseCase _createTodoUseCase;
     private readonly CompleteTodoUseCase _completeTodoUseCase;
     private readonly DeleteTodoUseCase _deleteTodoUseCase;
     
-    // DI Constructor
-    [Inject]
-    public void Construct(...)
+    // Constructor Injection
+    public TodoListPresenter(
+        GetAllTodosUseCase getAllTodosUseCase,
+        CreateTodoUseCase createTodoUseCase,
+        CompleteTodoUseCase completeTodoUseCase,
+        DeleteTodoUseCase deleteTodoUseCase)
+    {
+        _getAllTodosUseCase = getAllTodosUseCase;
+        _createTodoUseCase = createTodoUseCase;
+        _completeTodoUseCase = completeTodoUseCase;
+        _deleteTodoUseCase = deleteTodoUseCase;
+        
+        _todos = new ReactiveProperty<IReadOnlyList<TodoTask>>(new List<TodoTask>());
+        _isLoading = new ReactiveProperty<bool>(false);
+        _disposables = new CompositeDisposable();
+    }
+    
+    // EntryPoint Start
+    public void Start()
+    {
+        LoadTodosAsync().Forget();
+    }
     
     // Public Properties for View Binding
     public IReadOnlyReactiveProperty<IReadOnlyList<TodoTask>> Todos => _todos;
@@ -266,9 +286,43 @@ public class TodoListPresenter : MonoBehaviour
     
     // Public Methods for View Events
     public async UniTask LoadTodosAsync()
+    {
+        _isLoading.Value = true;
+        try
+        {
+            var todos = await _getAllTodosUseCase.ExecuteAsync();
+            _todos.Value = todos;
+        }
+        finally
+        {
+            _isLoading.Value = false;
+        }
+    }
+    
     public async UniTask CreateTodoAsync(string title, string description)
+    {
+        await _createTodoUseCase.ExecuteAsync(title, description);
+        await LoadTodosAsync();
+    }
+    
     public async UniTask ToggleCompleteAsync(string id)
+    {
+        await _completeTodoUseCase.ExecuteAsync(id);
+        await LoadTodosAsync();
+    }
+    
     public async UniTask DeleteTodoAsync(string id)
+    {
+        await _deleteTodoUseCase.ExecuteAsync(id);
+        await LoadTodosAsync();
+    }
+    
+    public void Dispose()
+    {
+        _disposables?.Dispose();
+        _todos?.Dispose();
+        _isLoading?.Dispose();
+    }
 }
 ```
 
@@ -291,12 +345,63 @@ public class TodoListView : MonoBehaviour
     
     [Inject]
     public void Construct(TodoListPresenter presenter)
+    {
+        _presenter = presenter;
+    }
     
     private void Start()
+    {
+        BindToPresenter();
+    }
+    
     private void OnDestroy()
+    {
+        _disposables?.Dispose();
+    }
+    
     private void BindToPresenter()
+    {
+        // Presenter の状態をUIにバインド
+        _presenter.Todos
+            .Subscribe(OnTodosChanged)
+            .AddTo(_disposables);
+            
+        _presenter.IsLoading
+            .Subscribe(isLoading => _loadingIndicator.SetActive(isLoading))
+            .AddTo(_disposables);
+            
+        // UI イベントをPresenterに転送
+        _addButton.onClick.AddListener(OnAddButtonClicked);
+    }
+    
     private void OnTodosChanged(IReadOnlyList<TodoTask> todos)
+    {
+        // 既存のアイテムをクリア
+        foreach (var item in _todoItemViews)
+            item.Cleanup();
+        _todoItemViews.Clear();
+        
+        // 新しいアイテムを作成
+        foreach (var todo in todos)
+        {
+            var itemView = Instantiate(_todoItemPrefab, _todoListParent);
+            itemView.Setup(todo, _presenter.ToggleCompleteAsync, _presenter.DeleteTodoAsync);
+            _todoItemViews.Add(itemView);
+        }
+    }
+    
     private void OnAddButtonClicked()
+    {
+        var title = _newTodoTitleInput.text;
+        var description = _newTodoDescriptionInput.text;
+        
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            _presenter.CreateTodoAsync(title, description).Forget();
+            _newTodoTitleInput.text = "";
+            _newTodoDescriptionInput.text = "";
+        }
+    }
 }
 ```
 
@@ -342,8 +447,8 @@ public class TodoAppLifetimeScope : LifetimeScope
         builder.Register<CompleteTodoUseCase>(Lifetime.Transient);
         builder.Register<DeleteTodoUseCase>(Lifetime.Transient);
         
-        // Presenters
-        builder.RegisterComponentInHierarchy<TodoListPresenter>();
+        // Presenters (EntryPoint)
+        builder.RegisterEntryPoint<TodoListPresenter>();
     }
 }
 ```
