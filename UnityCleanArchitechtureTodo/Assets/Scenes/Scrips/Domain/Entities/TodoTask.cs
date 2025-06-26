@@ -60,11 +60,15 @@ namespace UnityCleanArchitectureTodo.Domain.Entities
         
         /// <summary>
         /// タスクを未完了状態に戻す
-        /// TDD: 空の実装（テストが失敗することを確認するため）
+        /// TDD Green Phase: Uncomplete_ShouldMarkAsIncompleteテストを通すための実装
         /// </summary>
         public void Uncomplete()
         {
-            // まだ実装しない
+            if (IsCompleted)
+            {
+                IsCompleted = false;
+                CompletedAt = null;
+            }
         }
         
         /// <summary>
