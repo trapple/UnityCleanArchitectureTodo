@@ -42,7 +42,7 @@ namespace UnityCleanArchitectureTodo.App.UseCases
         /// Todoタスクの完了状態を切り替える
         /// </summary>
         /// <param name="taskId">対象タスクのID</param>
-        public async UniTask CompleteAsync(string taskId)
+        public async UniTask ToggleCompleteAsync(string taskId)
         {
             var task = await _repository.GetByIdAsync(taskId);
             if (task == null) return;

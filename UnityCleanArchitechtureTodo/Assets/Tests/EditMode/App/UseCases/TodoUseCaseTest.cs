@@ -85,20 +85,20 @@ namespace UnityCleanArchitectureTodo.Tests.App.UseCases
         /// タスク完了切り替え：タスクの完了状態を未完了→完了→未完了と正しく切り替えができることを確認
         /// </summary>
         [UnityTest]
-        public IEnumerator CompleteAsync_ShouldToggleTaskCompletion() => UniTask.ToCoroutine(async () =>
+        public IEnumerator ToggleCompleteAsync_ShouldToggleTaskCompletion() => UniTask.ToCoroutine(async () =>
         {
             // Arrange - 未完了状態のタスクを準備
             var task = new TodoTask("テストタスク", "説明");
             _mockRepository.SetTasks(new List<TodoTask> { task });
 
             // Act & Assert - タスクを完了状態にする
-            await _useCase.CompleteAsync(task.Id);
+            await _useCase.ToggleCompleteAsync(task.Id);
             Assert.IsTrue(task.IsCompleted);
             Assert.IsTrue(_mockRepository.SaveAsyncCalled);
 
             // Act & Assert - タスクを未完了状態に戻す
             _mockRepository.SaveAsyncCalled = false; // フラグをリセット
-            await _useCase.CompleteAsync(task.Id);
+            await _useCase.ToggleCompleteAsync(task.Id);
             Assert.IsFalse(task.IsCompleted);
             Assert.IsTrue(_mockRepository.SaveAsyncCalled);
         });
@@ -107,7 +107,7 @@ namespace UnityCleanArchitectureTodo.Tests.App.UseCases
         /// タスク完了切り替え（存在しないタスク）：存在しないタスクIDに対して例外が発生せず、処理が正常終了することを確認
         /// </summary>
         [UnityTest]
-        public IEnumerator CompleteAsync_TaskNotFound_ShouldNotThrow() => UniTask.ToCoroutine(async () =>
+        public IEnumerator ToggleCompleteAsync_TaskNotFound_ShouldNotThrow() => UniTask.ToCoroutine(async () =>
         {
             // Arrange - 空のタスクリストを設定（存在しないタスクIDをテストするため）
             _mockRepository.SetTasks(new List<TodoTask>());
@@ -115,7 +115,7 @@ namespace UnityCleanArchitectureTodo.Tests.App.UseCases
             // Act & Assert - 存在しないIDに対して例外が発生しないことを確認
             try
             {
-                await _useCase.CompleteAsync("存在しないID");
+                await _useCase.ToggleCompleteAsync("存在しないID");
                 // 例外が発生しなければテスト成功
             }
             catch (System.Exception ex)
