@@ -144,20 +144,15 @@ public interface ITodoRepository
 #### 4.2.1 UseCase設計
 
 **UseCase一覧**
-- `IGetAllTodosUseCase`: 全タスク取得
-- `ICreateTodoUseCase`: タスク作成
-- `IUpdateTodoUseCase`: タスク更新
-- `ICompleteTodoUseCase`: タスク完了切り替え
-- `IDeleteTodoUseCase`: タスク削除
+- `GetAllTodosUseCase`: 全タスク取得
+- `CreateTodoUseCase`: タスク作成
+- `UpdateTodoUseCase`: タスク更新
+- `CompleteTodoUseCase`: タスク完了切り替え
+- `DeleteTodoUseCase`: タスク削除
 
 **UseCase実装例**
 ```csharp
-public interface IGetAllTodosUseCase
-{
-    UniTask<IReadOnlyList<TodoTask>> ExecuteAsync();
-}
-
-public class GetAllTodosUseCase : IGetAllTodosUseCase
+public class GetAllTodosUseCase
 {
     private readonly ITodoRepository _repository;
     
@@ -234,10 +229,10 @@ public class TodoListPresenter : MonoBehaviour
     private readonly ReactiveProperty<IReadOnlyList<TodoTask>> _todos;
     private readonly ReactiveProperty<bool> _isLoading;
     
-    private readonly IGetAllTodosUseCase _getAllTodosUseCase;
-    private readonly ICreateTodoUseCase _createTodoUseCase;
-    private readonly ICompleteTodoUseCase _completeTodoUseCase;
-    private readonly IDeleteTodoUseCase _deleteTodoUseCase;
+    private readonly GetAllTodosUseCase _getAllTodosUseCase;
+    private readonly CreateTodoUseCase _createTodoUseCase;
+    private readonly CompleteTodoUseCase _completeTodoUseCase;
+    private readonly DeleteTodoUseCase _deleteTodoUseCase;
     
     // DI Constructor
     [Inject]
@@ -321,11 +316,11 @@ public class TodoAppLifetimeScope : LifetimeScope
         builder.Register<ITodoRepository, CsvTodoRepository>(Lifetime.Singleton);
         
         // UseCases
-        builder.Register<IGetAllTodosUseCase, GetAllTodosUseCase>(Lifetime.Transient);
-        builder.Register<ICreateTodoUseCase, CreateTodoUseCase>(Lifetime.Transient);
-        builder.Register<IUpdateTodoUseCase, UpdateTodoUseCase>(Lifetime.Transient);
-        builder.Register<ICompleteTodoUseCase, CompleteTodoUseCase>(Lifetime.Transient);
-        builder.Register<IDeleteTodoUseCase, DeleteTodoUseCase>(Lifetime.Transient);
+        builder.Register<GetAllTodosUseCase>(Lifetime.Transient);
+        builder.Register<CreateTodoUseCase>(Lifetime.Transient);
+        builder.Register<UpdateTodoUseCase>(Lifetime.Transient);
+        builder.Register<CompleteTodoUseCase>(Lifetime.Transient);
+        builder.Register<DeleteTodoUseCase>(Lifetime.Transient);
         
         // Presenters
         builder.RegisterComponentInHierarchy<TodoListPresenter>();
@@ -392,7 +387,6 @@ public static class CsvHelper
    - ITodoRepository (Interface)
 
 2. **App層の実装**
-   - 各UseCase Interface
    - 各UseCase実装
 
 3. **Infra層の実装**
