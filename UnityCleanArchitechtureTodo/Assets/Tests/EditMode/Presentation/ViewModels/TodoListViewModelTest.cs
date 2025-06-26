@@ -152,17 +152,25 @@ namespace UnityCleanArchitectureTodo.Tests.Presentation.ViewModels
             // Arrange - 初期状態の確認
             Assert.IsFalse(_viewModel.IsLoading.CurrentValue, "初期状態でIsLoadingはfalseであるべき");
 
-            // Act - 非同期操作の実行（LoadTasksAsync）
+            // Arrange - 遅延を設定してLoading状態を確認しやすくする
+            _mockRepository.DelayMilliseconds = 100; // 100ms遅延
+
+            // Act - 非同期操作を開始（待機しない）
             var loadTask = _viewModel.LoadTasksAsync();
             
-            // Assert - 操作中はIsLoadingがtrueになることを確認（実装後に有効になる）
-            // 現在は空実装のため、この部分はコメントアウト
-            // Assert.IsTrue(_viewModel.IsLoading.Value, "操作中はIsLoadingがtrueになるべき");
+            // Assert - 操作開始直後はIsLoadingがtrueになることを確認
+            Assert.IsTrue(_viewModel.IsLoading.CurrentValue, "操作中はIsLoadingがtrueになるべき");
 
+            // Act - 操作完了まで待機
             await loadTask;
 
             // Assert - 操作完了後はIsLoadingがfalseに戻ることを確認
             Assert.IsFalse(_viewModel.IsLoading.CurrentValue, "操作完了後はIsLoadingがfalseになるべき");
+            
+            // 遅延をリセットして複数回の操作をテスト
+            _mockRepository.DelayMilliseconds = 0;
+            await _viewModel.LoadTasksAsync();
+            Assert.IsFalse(_viewModel.IsLoading.CurrentValue, "複数回実行後もIsLoadingがfalseになるべき");
         });
     }
 
@@ -175,15 +183,22 @@ namespace UnityCleanArchitectureTodo.Tests.Presentation.ViewModels
         public bool SaveAsyncCalled { get; set; }
         public bool DeleteAsyncCalled { get; set; }
         public string LastDeletedId { get; set; }
+        
+        // 遅延設定用プロパティ
+        public int DelayMilliseconds { get; set; } = 0;
 
         public void SetTasks(List<TodoTask> tasks)
         {
             _tasks = tasks;
         }
 
-        public UniTask<IReadOnlyList<TodoTask>> GetAllAsync()
+        public async UniTask<IReadOnlyList<TodoTask>> GetAllAsync()
         {
-            return UniTask.FromResult((IReadOnlyList<TodoTask>)_tasks.AsReadOnly());
+            if (DelayMilliseconds > 0)
+            {
+                await UniTask.Delay(DelayMilliseconds);
+            }
+            return _tasks.AsReadOnly();
         }
 
         public UniTask<TodoTask> GetByIdAsync(string id)

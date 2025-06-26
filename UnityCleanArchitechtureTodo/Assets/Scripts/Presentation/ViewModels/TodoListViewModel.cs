@@ -62,8 +62,16 @@ namespace UnityCleanArchitectureTodo.Presentation.ViewModels
         /// </summary>
         public async UniTask LoadTasksAsync()
         {
-            var tasks = await _todoUseCase.GetAllAsync();
-            _todos.Value = tasks;
+            _isLoading.Value = true;
+            try
+            {
+                var tasks = await _todoUseCase.GetAllAsync();
+                _todos.Value = tasks;
+            }
+            finally
+            {
+                _isLoading.Value = false;
+            }
         }
 
         /// <summary>
