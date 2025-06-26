@@ -22,8 +22,9 @@ namespace UnityCleanArchitectureTodo.Presentation.ViewModels
         private readonly ReactiveProperty<string> _newTodoTitle = new("");
         private readonly ReactiveProperty<string> _newTodoDescription = new("");
 
-        public ReadOnlyReactiveProperty<IReadOnlyList<TodoTask>> Todos { get; }
-        public ReadOnlyReactiveProperty<bool> IsLoading { get; }
+        public ReadOnlyReactiveProperty<IReadOnlyList<TodoTask>> Todos => _todos.ToReadOnlyReactiveProperty();
+        public ReadOnlyReactiveProperty<bool> IsLoading => _isLoading.ToReadOnlyReactiveProperty();
+
         public ReactiveProperty<string> NewTodoTitle => _newTodoTitle;
         public ReactiveProperty<string> NewTodoDescription => _newTodoDescription;
 
@@ -36,10 +37,6 @@ namespace UnityCleanArchitectureTodo.Presentation.ViewModels
         public TodoListViewModel(TodoUseCase todoUseCase)
         {
             _todoUseCase = todoUseCase;
-
-            // ReadOnlyReactivePropertyを初期化
-            Todos = _todos.AsReadOnly();
-            IsLoading = _isLoading.AsReadOnly();
 
             // Commands初期化（空実装）
             CreateTodoCommand = new ReactiveCommand();
