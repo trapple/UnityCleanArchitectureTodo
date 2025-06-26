@@ -17,14 +17,26 @@ namespace UnityCleanArchitectureTodo.Domain.Entities
         
         /// <summary>
         /// TodoTaskのコンストラクタ
-        /// TDD: 空の実装（テストが失敗することを確認するため）
+        /// TDD Green Phase: Constructor_ShouldSetPropertiesCorrectlyテストを通すための実装
         /// </summary>
         /// <param name="id">タスクID</param>
         /// <param name="title">タスクタイトル</param>
         /// <param name="description">タスク説明</param>
         public TodoTask(string id, string title, string description)
         {
-            // まだ実装しない
+            // バリデーション
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentException("IDは必須です", nameof(id));
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("タイトルは必須です", nameof(title));
+            
+            // プロパティ設定
+            Id = id;
+            Title = title;
+            Description = description ?? "";
+            IsCompleted = false;
+            CreatedAt = DateTime.Now;
+            CompletedAt = null;
         }
         
         /// <summary>
