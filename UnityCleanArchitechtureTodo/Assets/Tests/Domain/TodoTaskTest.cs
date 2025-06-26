@@ -14,7 +14,8 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
         /// <summary>
         /// テスト対象: TodoTaskのコンストラクタ
         /// 期待結果: プロパティが正しく設定される
-        /// - Id, Title, Description が設定される
+        /// - Id が自動生成される（非空文字列）
+        /// - Title, Description が設定される
         /// - IsCompleted は false で初期化される
         /// - CreatedAt は指定した日時で設定される
         /// - CompletedAt は null で初期化される
@@ -26,15 +27,15 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
             var fixedTime = new DateTime(2024, 1, 1, 12, 0, 0);
             var mockTime = new MockTimeProvider(fixedTime);
             
-            var id = "test-id";
             var title = "テストタスク";
             var description = "テスト用の説明";
             
             // Act
-            var task = new TodoTask(id, title, description, mockTime);
+            var task = new TodoTask(title, description, mockTime);
             
             // Assert
-            Assert.AreEqual(id, task.Id);
+            Assert.IsNotNull(task.Id);
+            Assert.IsNotEmpty(task.Id);
             Assert.AreEqual(title, task.Title);
             Assert.AreEqual(description, task.Description);
             Assert.IsFalse(task.IsCompleted);
@@ -56,7 +57,7 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
             var completedTime = new DateTime(2024, 1, 1, 14, 30, 0);
             
             var mockTime = new MockTimeProvider(createdTime);
-            var task = new TodoTask("test-id", "テストタスク", "説明", mockTime);
+            var task = new TodoTask("テストタスク", "説明", mockTime);
             
             // Complete時刻を2時間30分後に設定
             mockTime.SetUtcNow(completedTime);
@@ -83,7 +84,7 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
             var completedTime = new DateTime(2024, 1, 1, 14, 30, 0);
             
             var mockTime = new MockTimeProvider(createdTime);
-            var task = new TodoTask("test-id", "テストタスク", "説明", mockTime);
+            var task = new TodoTask("テストタスク", "説明", mockTime);
             
             mockTime.SetUtcNow(completedTime);
             task.Complete();
@@ -106,7 +107,7 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
         {
             // Arrange
             var mockTime = new MockTimeProvider(DateTime.Now);
-            var task = new TodoTask("test-id", "元のタイトル", "説明", mockTime);
+            var task = new TodoTask("元のタイトル", "説明", mockTime);
             var newTitle = "新しいタイトル";
             
             // Act
@@ -128,7 +129,7 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
         {
             // Arrange
             var mockTime = new MockTimeProvider(DateTime.Now);
-            var task = new TodoTask("test-id", "タイトル", "説明", mockTime);
+            var task = new TodoTask("タイトル", "説明", mockTime);
             
             // Act & Assert
             Assert.Throws<ArgumentException>(() => task.UpdateTitle(null));
@@ -147,7 +148,7 @@ namespace UnityCleanArchitectureTodo.Tests.Domain
         {
             // Arrange
             var mockTime = new MockTimeProvider(DateTime.Now);
-            var task = new TodoTask("test-id", "タイトル", "元の説明", mockTime);
+            var task = new TodoTask("タイトル", "元の説明", mockTime);
             var newDescription = "新しい説明";
             
             // Act

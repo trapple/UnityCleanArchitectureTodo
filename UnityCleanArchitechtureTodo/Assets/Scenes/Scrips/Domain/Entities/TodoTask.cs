@@ -4,7 +4,7 @@ namespace UnityCleanArchitectureTodo.Domain.Entities
 {
     /// <summary>
     /// TodoTask Entity
-    /// TDD Green Phase: コンストラクタのテストを通すための最小実装
+    /// ID自動生成によるドメインオブジェクトの責務向上
     /// </summary>
     public class TodoTask
     {
@@ -19,17 +19,14 @@ namespace UnityCleanArchitectureTodo.Domain.Entities
         
         /// <summary>
         /// TodoTaskのコンストラクタ
-        /// TDD Green Phase: Constructor_ShouldSetPropertiesCorrectlyテストを通すための実装
+        /// TDD Refactor Phase: ID自動生成による改善
         /// </summary>
-        /// <param name="id">タスクID</param>
         /// <param name="title">タスクタイトル</param>
         /// <param name="description">タスク説明</param>
         /// <param name="timeProvider">時刻プロバイダー（テスト可能性のため）</param>
-        public TodoTask(string id, string title, string description, TimeProvider timeProvider = null)
+        public TodoTask(string title, string description, TimeProvider timeProvider = null)
         {
             // バリデーション
-            if (string.IsNullOrWhiteSpace(id))
-                throw new ArgumentException("IDは必須です", nameof(id));
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentException("タイトルは必須です", nameof(title));
             
@@ -37,7 +34,7 @@ namespace UnityCleanArchitectureTodo.Domain.Entities
             _timeProvider = timeProvider ?? TimeProvider.System;
             
             // プロパティ設定
-            Id = id;
+            Id = GenerateNewId(); // ID自動生成
             Title = title;
             Description = description ?? "";
             IsCompleted = false;

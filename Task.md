@@ -22,10 +22,10 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 - ✅ UpdateTitle()メソッド実装
 - ✅ UpdateDescription()メソッド実装
 - ✅ GenerateNewId()静的メソッド実装
-- ⏳ **Next**: Refactor: コードの改善
+- ✅ Refactor: ID自動生成による設計改善
 
 ### 1.3 ITodoRepository Interface
-- ⬜ ITodoRepository.cs作成
+- ⏳ **Next**: ITodoRepository.cs作成
 - ⬜ GetAllAsync()メソッド定義
 - ⬜ GetByIdAsync()メソッド定義
 - ⬜ SaveAsync()メソッド定義
@@ -77,9 +77,9 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 ---
 
 ## 現在の状況
-- **現在地**: 1.2 TodoTask Entity の実装（TDD Green Phase）
-- **次のタスク**: TodoTask Entityのリファクタリング（TDD Refactor phase）
-- **TDDフェーズ**: Green Phase完了 → Refactor Phase準備
+- **現在地**: 1.2 TodoTask Entity の実装（TDD Refactor Phase完了）
+- **次のタスク**: 1.3 ITodoRepository Interface の定義
+- **TDDフェーズ**: Refactor Phase完了 → Domain層完了
 
 ## 凡例
 - ✅ 完了
