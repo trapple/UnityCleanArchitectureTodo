@@ -53,7 +53,6 @@ UnityでClean Architectureパターンを適用したTodoアプリケーショ�
 Assets/Scripts/
 ├── Domain/                  # ドメインレイヤー
 │   ├── Entities/           # エンティティ
-│   ├── ValueObjects/       # 値オブジェクト
 │   └── Repositories/       # リポジトリインターフェース
 ├── App/                   # アプリケーションレイヤー
 │   ├── UseCases/          # ユースケース
@@ -95,7 +94,7 @@ Presentation → App → Domain ← Infra
 ```csharp
 public class TodoTask
 {
-    public TodoId Id { get; }
+    public string Id { get; }
     public string Title { get; private set; }
     public string Description { get; private set; }
     public bool IsCompleted { get; private set; }
@@ -107,35 +106,22 @@ public class TodoTask
     public void Uncomplete()
     public void UpdateTitle(string title)
     public void UpdateDescription(string description)
-}
-```
-
-#### 4.1.2 Value Object設計
-
-**TodoId Value Object**
-```csharp
-public readonly struct TodoId : IEquatable<TodoId>
-{
-    public string Value { get; }
     
-    public TodoId(string value)
-    public static TodoId Generate()
-    public bool Equals(TodoId other)
-    public override bool Equals(object obj)
-    public override int GetHashCode()
+    // ID生成メソッド
+    public static string GenerateNewId() => Guid.NewGuid().ToString()
 }
 ```
 
-#### 4.1.3 Repository Interface
+#### 4.1.2 Repository Interface
 
 **ITodoRepository**
 ```csharp
 public interface ITodoRepository
 {
     UniTask<IReadOnlyList<TodoTask>> GetAllAsync();
-    UniTask<TodoTask> GetByIdAsync(TodoId id);
+    UniTask<TodoTask> GetByIdAsync(string id);
     UniTask SaveAsync(TodoTask task);
-    UniTask DeleteAsync(TodoId id);
+    UniTask DeleteAsync(string id);
 }
 ```
 
@@ -245,8 +231,8 @@ public class TodoListPresenter : MonoBehaviour
     // Public Methods for View Events
     public async UniTask LoadTodosAsync()
     public async UniTask CreateTodoAsync(string title, string description)
-    public async UniTask ToggleCompleteAsync(TodoId id)
-    public async UniTask DeleteTodoAsync(TodoId id)
+    public async UniTask ToggleCompleteAsync(string id)
+    public async UniTask DeleteTodoAsync(string id)
 }
 ```
 
@@ -291,7 +277,7 @@ public class TodoItemView : MonoBehaviour
     private TodoTask _currentTask;
     private readonly CompositeDisposable _disposables = new();
     
-    public void Setup(TodoTask task, System.Action<TodoId> onToggleComplete, System.Action<TodoId> onDelete)
+    public void Setup(TodoTask task, System.Action<string> onToggleComplete, System.Action<string> onDelete)
     public void Cleanup()
     private void UpdateUI()
     private void OnToggleChanged(bool isOn)
@@ -382,7 +368,6 @@ public static class CsvHelper
 ### 7.1 推奨実装順序
 
 1. **Domain層の実装**
-   - TodoId (Value Object)
    - TodoTask (Entity)
    - ITodoRepository (Interface)
 
