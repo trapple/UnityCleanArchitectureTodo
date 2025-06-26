@@ -86,12 +86,12 @@ namespace UnityCleanArchitectureTodo.Domain.Entities
         
         /// <summary>
         /// タスクの説明を更新する
-        /// TDD: 空の実装（テストが失敗することを確認するため）
+        /// TDD Green Phase: UpdateDescription_ShouldChangeDescriptionテストを通すための実装
         /// </summary>
         /// <param name="description">新しい説明</param>
         public void UpdateDescription(string description)
         {
-            // まだ実装しない
+            Description = description ?? "";
         }
         
         /// <summary>
