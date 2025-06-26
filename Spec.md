@@ -58,23 +58,41 @@ Assets/Scripts/
 │   ├── UseCases/          # ユースケース
 │   └── Services/         # アプリケーションサービス
 ├── Infra/                 # インフラレイヤー
-│   ├── Repositories/      # リポジトリ実装
-│   └── DataSources/       # データソース
+│   └── Repositories/      # リポジトリ実装
 └── Presentation/          # プレゼンテーションレイヤー
-    ├── UI/               # UIコンポーネント
+    ├── ViewModels/       # ビューモデル
     ├── Presenters/       # プレゼンター
     └── Views/            # ビュー
 ```
 
 ### 3.2 依存関係の流れ
 
+#### 3.2.1 大きく4層の依存関係
+
 ```
 Presentation → App → Domain ← Infra
 ```
 
-- 外側のレイヤーは内側のレイヤーに依存
-- Domainレイヤーは他のレイヤーに依存しない
-- Infraレイヤーは依存関係逆転の原則によってDomainレイヤーのインターフェースを実装
+- **Presentation層**: App層に依存（UseCaseを呼び出し）
+- **App層**: Domain層に依存（Entity、Repositoryインターフェースを使用）
+- **Infra層**: Domain層に依存（依存関係逆転の原則でRepositoryインターフェースを実装）
+- **Domain層**: 他のレイヤーに依存しない（純粋なビジネスロジック）
+
+#### 3.2.2 Presentation層内部の依存関係
+
+```
+View → ViewModel ← Presenter
+```
+
+- **View**: ViewModelに依存（データバインディング）
+- **Presenter**: ViewModelに依存（状態更新、コマンド処理）
+- **ViewModel**: 他に依存しない（状態とコマンドの定義のみ）
+
+**MVVMパターンの特徴**:
+- ViewとPresenterは直接依存しない
+- ViewModelが状態の中心となる
+- Presenterがビジネスロジックを担当
+- Viewが純粋な表示を担当
 
 ### 3.3 ライブラリ依存関係ルール
 
@@ -242,14 +260,77 @@ public class CsvTodoRepository : ITodoRepository
 
 ### 4.4 Presentationレイヤー
 
-#### 4.4.1 Presenter設計
+#### 4.4.1 ViewModel設計
+
+**TodoListViewModel**
+```csharp
+public class TodoListViewModel : IDisposable
+{
+    private readonly ReactiveProperty<IReadOnlyList<TodoTask>> _todos;
+    private readonly ReactiveProperty<bool> _isLoading;
+    private readonly ReactiveProperty<string> _newTodoTitle;
+    private readonly ReactiveProperty<string> _newTodoDescription;
+    private readonly CompositeDisposable _disposables;
+    
+    public TodoListViewModel()
+    {
+        _todos = new ReactiveProperty<IReadOnlyList<TodoTask>>(new List<TodoTask>());
+        _isLoading = new ReactiveProperty<bool>(false);
+        _newTodoTitle = new ReactiveProperty<string>("");
+        _newTodoDescription = new ReactiveProperty<string>("");
+        _disposables = new CompositeDisposable();
+        
+        // Commands
+        CreateTodoCommand = _newTodoTitle
+            .Select(title => !string.IsNullOrWhiteSpace(title))
+            .ToReactiveCommand()
+            .AddTo(_disposables);
+            
+        DeleteTodoCommand = new ReactiveCommand<string>()
+            .AddTo(_disposables);
+            
+        ToggleCompleteCommand = new ReactiveCommand<string>()
+            .AddTo(_disposables);
+    }
+    
+    // Properties
+    public IReadOnlyReactiveProperty<IReadOnlyList<TodoTask>> Todos => _todos;
+    public IReadOnlyReactiveProperty<bool> IsLoading => _isLoading;
+    public ReactiveProperty<string> NewTodoTitle => _newTodoTitle;
+    public ReactiveProperty<string> NewTodoDescription => _newTodoDescription;
+    
+    // Commands
+    public ReactiveCommand CreateTodoCommand { get; }
+    public ReactiveCommand<string> DeleteTodoCommand { get; }
+    public ReactiveCommand<string> ToggleCompleteCommand { get; }
+    
+    // Internal methods for Presenter
+    public void SetTodos(IReadOnlyList<TodoTask> todos) => _todos.Value = todos;
+    public void SetLoading(bool isLoading) => _isLoading.Value = isLoading;
+    public void ClearNewTodoInputs()
+    {
+        _newTodoTitle.Value = "";
+        _newTodoDescription.Value = "";
+    }
+    
+    public void Dispose()
+    {
+        _disposables?.Dispose();
+        _todos?.Dispose();
+        _isLoading?.Dispose();
+        _newTodoTitle?.Dispose();
+        _newTodoDescription?.Dispose();
+    }
+}
+```
+
+#### 4.4.2 Presenter設計
 
 **TodoListPresenter**
 ```csharp
 public class TodoListPresenter : IStartable, IDisposable
 {
-    private readonly ReactiveProperty<IReadOnlyList<TodoTask>> _todos;
-    private readonly ReactiveProperty<bool> _isLoading;
+    private readonly TodoListViewModel _viewModel;
     private readonly CompositeDisposable _disposables;
     
     private readonly GetAllTodosUseCase _getAllTodosUseCase;
@@ -259,74 +340,85 @@ public class TodoListPresenter : IStartable, IDisposable
     
     // Constructor Injection
     public TodoListPresenter(
+        TodoListViewModel viewModel,
         GetAllTodosUseCase getAllTodosUseCase,
         CreateTodoUseCase createTodoUseCase,
         CompleteTodoUseCase completeTodoUseCase,
         DeleteTodoUseCase deleteTodoUseCase)
     {
+        _viewModel = viewModel;
         _getAllTodosUseCase = getAllTodosUseCase;
         _createTodoUseCase = createTodoUseCase;
         _completeTodoUseCase = completeTodoUseCase;
         _deleteTodoUseCase = deleteTodoUseCase;
         
-        _todos = new ReactiveProperty<IReadOnlyList<TodoTask>>(new List<TodoTask>());
-        _isLoading = new ReactiveProperty<bool>(false);
         _disposables = new CompositeDisposable();
     }
     
     // EntryPoint Start
     public void Start()
     {
+        // Commandをバインド
+        _viewModel.CreateTodoCommand
+            .Subscribe(_ => OnCreateTodo())
+            .AddTo(_disposables);
+            
+        _viewModel.DeleteTodoCommand
+            .Subscribe(OnDeleteTodo)
+            .AddTo(_disposables);
+            
+        _viewModel.ToggleCompleteCommand
+            .Subscribe(OnToggleComplete)
+            .AddTo(_disposables);
+        
+        // 初期ロード
         LoadTodosAsync().Forget();
     }
     
-    // Public Properties for View Binding
-    public IReadOnlyReactiveProperty<IReadOnlyList<TodoTask>> Todos => _todos;
-    public IReadOnlyReactiveProperty<bool> IsLoading => _isLoading;
-    
-    // Public Methods for View Events
-    public async UniTask LoadTodosAsync()
+    private async void OnCreateTodo()
     {
-        _isLoading.Value = true;
-        try
-        {
-            var todos = await _getAllTodosUseCase.ExecuteAsync();
-            _todos.Value = todos;
-        }
-        finally
-        {
-            _isLoading.Value = false;
-        }
-    }
-    
-    public async UniTask CreateTodoAsync(string title, string description)
-    {
+        var title = _viewModel.NewTodoTitle.Value;
+        var description = _viewModel.NewTodoDescription.Value;
+        
         await _createTodoUseCase.ExecuteAsync(title, description);
+        _viewModel.ClearNewTodoInputs();
         await LoadTodosAsync();
     }
     
-    public async UniTask ToggleCompleteAsync(string id)
-    {
-        await _completeTodoUseCase.ExecuteAsync(id);
-        await LoadTodosAsync();
-    }
-    
-    public async UniTask DeleteTodoAsync(string id)
+    private async void OnDeleteTodo(string id)
     {
         await _deleteTodoUseCase.ExecuteAsync(id);
         await LoadTodosAsync();
     }
     
+    private async void OnToggleComplete(string id)
+    {
+        await _completeTodoUseCase.ExecuteAsync(id);
+        await LoadTodosAsync();
+    }
+    
+    private async UniTask LoadTodosAsync()
+    {
+        _viewModel.SetLoading(true);
+        try
+        {
+            var todos = await _getAllTodosUseCase.ExecuteAsync();
+            _viewModel.SetTodos(todos);
+        }
+        finally
+        {
+            _viewModel.SetLoading(false);
+        }
+    }
+    
     public void Dispose()
     {
         _disposables?.Dispose();
-        _todos?.Dispose();
-        _isLoading?.Dispose();
     }
 }
 ```
 
-#### 4.4.2 View設計
+#### 4.4.3 View設計
 
 **TodoListView**
 ```csharp
@@ -339,19 +431,19 @@ public class TodoListView : MonoBehaviour
     [SerializeField] private TMP_InputField _newTodoDescriptionInput;
     [SerializeField] private GameObject _loadingIndicator;
     
-    private TodoListPresenter _presenter;
+    private TodoListViewModel _viewModel;
     private readonly List<TodoItemView> _todoItemViews = new();
     private readonly CompositeDisposable _disposables = new();
     
     [Inject]
-    public void Construct(TodoListPresenter presenter)
+    public void Construct(TodoListViewModel viewModel)
     {
-        _presenter = presenter;
+        _viewModel = viewModel;
     }
     
     private void Start()
     {
-        BindToPresenter();
+        BindToViewModel();
     }
     
     private void OnDestroy()
@@ -359,19 +451,30 @@ public class TodoListView : MonoBehaviour
         _disposables?.Dispose();
     }
     
-    private void BindToPresenter()
+    private void BindToViewModel()
     {
-        // Presenter の状態をUIにバインド
-        _presenter.Todos
+        // ViewModelの状態をUIにバインド
+        _viewModel.Todos
             .Subscribe(OnTodosChanged)
             .AddTo(_disposables);
             
-        _presenter.IsLoading
+        _viewModel.IsLoading
             .Subscribe(isLoading => _loadingIndicator.SetActive(isLoading))
             .AddTo(_disposables);
+        
+        // InputフィールドをViewModelにバインド
+        _viewModel.NewTodoTitle
+            .BindTo(_newTodoTitleInput)
+            .AddTo(_disposables);
             
-        // UI イベントをPresenterに転送
-        _addButton.onClick.AddListener(OnAddButtonClicked);
+        _viewModel.NewTodoDescription
+            .BindTo(_newTodoDescriptionInput)
+            .AddTo(_disposables);
+        
+        // CommandをUIイベントにバインド
+        _addButton.onClick.AsObservable()
+            .Subscribe(_ => _viewModel.CreateTodoCommand.Execute())
+            .AddTo(_disposables);
     }
     
     private void OnTodosChanged(IReadOnlyList<TodoTask> todos)
@@ -385,21 +488,10 @@ public class TodoListView : MonoBehaviour
         foreach (var todo in todos)
         {
             var itemView = Instantiate(_todoItemPrefab, _todoListParent);
-            itemView.Setup(todo, _presenter.ToggleCompleteAsync, _presenter.DeleteTodoAsync);
+            itemView.Setup(todo, 
+                id => _viewModel.ToggleCompleteCommand.Execute(id),
+                id => _viewModel.DeleteTodoCommand.Execute(id));
             _todoItemViews.Add(itemView);
-        }
-    }
-    
-    private void OnAddButtonClicked()
-    {
-        var title = _newTodoTitleInput.text;
-        var description = _newTodoDescriptionInput.text;
-        
-        if (!string.IsNullOrWhiteSpace(title))
-        {
-            _presenter.CreateTodoAsync(title, description).Forget();
-            _newTodoTitleInput.text = "";
-            _newTodoDescriptionInput.text = "";
         }
     }
 }
@@ -447,8 +539,14 @@ public class TodoAppLifetimeScope : LifetimeScope
         builder.Register<CompleteTodoUseCase>(Lifetime.Transient);
         builder.Register<DeleteTodoUseCase>(Lifetime.Transient);
         
+        // ViewModel
+        builder.Register<TodoListViewModel>(Lifetime.Singleton);
+        
         // Presenters (EntryPoint)
         builder.RegisterEntryPoint<TodoListPresenter>();
+        
+        // Views
+        builder.RegisterComponentInHierarchy<TodoListView>();
     }
 }
 ```
@@ -518,6 +616,7 @@ public static class CsvHelper
    - CSVファイル操作ロジック
 
 4. **Presentation層の実装**
+   - TodoListViewModel実装
    - TodoListPresenter実装
    - TodoListView実装
    - TodoItemView実装
