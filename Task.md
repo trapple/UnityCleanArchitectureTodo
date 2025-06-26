@@ -38,14 +38,14 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
   - ✅ GetAllAsync_ShouldReturnAllTodos テスト
   - ✅ GetAllAsync_EmptyRepository_ShouldReturnEmptyList テスト
   - ✅ CreateAsync_ShouldCreateAndSaveTask テスト
-  - ✅ CompleteAsync_ShouldToggleTaskCompletion テスト
+  - ✅ ToggleCompleteAsync_ShouldToggleTaskCompletion テスト（メソッド名改善）
   - ✅ UpdateTitleAsync_ShouldUpdateTaskTitle テスト
   - ✅ UpdateDescriptionAsync_ShouldUpdateTaskDescription テスト
   - ✅ DeleteAsync_ShouldCallRepositoryDelete テスト
 - ✅ TodoUseCase.cs実装（全メソッド統合）
   - ✅ GetAllAsync() - 全タスク取得
   - ✅ CreateAsync() - タスク作成
-  - ✅ CompleteAsync() - 完了切り替え
+  - ✅ ToggleCompleteAsync() - 完了切り替え（メソッド名改善済み）
   - ✅ UpdateTitleAsync() - タイトル更新
   - ✅ UpdateDescriptionAsync() - 説明更新
   - ✅ DeleteAsync() - タスク削除
@@ -82,16 +82,16 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
   - ✅ LoadTasks_ShouldUpdateTodosProperty テスト - タスク読み込み機能完了
   - ✅ CreateCommand_WithValidInput_ShouldCreateTask テスト - タスク作成機能完了
   - ✅ CreateCommand_WithEmptyTitle_ShouldNotExecute テスト - バリデーション完了
-  - ⏳ ToggleCompleteCommand_ShouldToggleTaskState テスト - 次のタスク
-  - ⬜ DeleteCommand_ShouldRemoveTask テスト
+  - ✅ ToggleCompleteCommand_ShouldToggleTaskState テスト - 完了切り替え機能完了
+  - ⏳ DeleteCommand_ShouldRemoveTask テスト - 次のタスク
   - ⬜ Operations_ShouldManageLoadingState テスト
-- ⏳ TodoListViewModel.cs実装（TDD Green Phase 4/7完了）
+- ⏳ TodoListViewModel.cs実装（TDD Green Phase 5/7完了）
   - ✅ ReactiveProperty による状態管理
   - ✅ ReactiveCommand による操作実装
   - ✅ TodoUseCaseとの連携
   - ✅ CreateTodoAsync() - タスク作成機能（バリデーション付き）
-  - ⏳ ToggleCompleteAsync() - 完了切り替え機能（次のタスク）
-  - ⬜ DeleteTodoAsync() - タスク削除機能
+  - ✅ ToggleCompleteAsync() - 完了切り替え機能（メソッド名改善済み）
+  - ⏳ DeleteTodoAsync() - タスク削除機能（次のタスク）
   - ⬜ LoadingState管理機能
 
 ### 4.2 その他のPresentation層コンポーネント
@@ -114,9 +114,9 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 
 ## 現在の状況
 - **現在地**: 4.1 TodoListViewModelのTDD実装中（Presentation層）
-- **次のタスク**: ToggleCompleteAsync()実装（TDD Green Phase 5/7）
-- **TDDフェーズ**: Presentation層MVVM実装継続中（4/7テスト完了）
-- **実装済み**: Domain層、App層、Infra層の完全実装 + ViewModel基本機能
+- **次のタスク**: DeleteTodoAsync()実装（TDD Green Phase 6/7）
+- **TDDフェーズ**: Presentation層MVVM実装継続中（5/7テスト完了）
+- **実装済み**: Domain層、App層、Infra層の完全実装 + ViewModel基本機能（作成・切り替え）
 
 ## 凡例
 - ✅ 完了
