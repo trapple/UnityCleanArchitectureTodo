@@ -73,12 +73,15 @@ namespace UnityCleanArchitectureTodo.Domain.Entities
         
         /// <summary>
         /// タスクのタイトルを更新する
-        /// TDD: 空の実装（テストが失敗することを確認するため）
+        /// TDD Green Phase: UpdateTitle関連テストを通すための実装
         /// </summary>
         /// <param name="title">新しいタイトル</param>
         public void UpdateTitle(string title)
         {
-            // まだ実装しない
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("タイトルは必須です", nameof(title));
+            
+            Title = title;
         }
         
         /// <summary>

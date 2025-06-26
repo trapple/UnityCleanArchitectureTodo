@@ -19,8 +19,8 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 - ✅ Constructor実装（TDD Green Phase）
 - ✅ Complete()メソッド実装
 - ✅ Uncomplete()メソッド実装
-- ⏳ **Next**: UpdateTitle()メソッド実装
-- ⬜ UpdateDescription()メソッド実装
+- ✅ UpdateTitle()メソッド実装
+- ⏳ **Next**: UpdateDescription()メソッド実装
 - ⬜ GenerateNewId()静的メソッド実装
 - ⬜ Refactor: コードの改善
 
@@ -78,7 +78,7 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 
 ## 現在の状況
 - **現在地**: 1.2 TodoTask Entity の実装（TDD Green Phase）
-- **次のタスク**: UpdateTitle()メソッドの実装でUpdateTitle_ShouldChangeTitleテストを通す
+- **次のタスク**: UpdateDescription()メソッドの実装でUpdateDescription_ShouldChangeDescriptionテストを通す
 - **TDDフェーズ**: Green Phase継続中（段階的実装）
 
 ## 凡例
