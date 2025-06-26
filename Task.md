@@ -17,8 +17,8 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 ### 1.2 TodoTask Entity の実装
 - ✅ TodoTask.cs基本構造作成（空実装でTDD Red Phase）
 - ✅ Constructor実装（TDD Green Phase）
-- ⏳ **Next**: Complete()メソッド実装
-- ⬜ Uncomplete()メソッド実装
+- ✅ Complete()メソッド実装
+- ⏳ **Next**: Uncomplete()メソッド実装
 - ⬜ UpdateTitle()メソッド実装
 - ⬜ UpdateDescription()メソッド実装
 - ⬜ GenerateNewId()静的メソッド実装
@@ -78,7 +78,7 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 
 ## 現在の状況
 - **現在地**: 1.2 TodoTask Entity の実装（TDD Green Phase）
-- **次のタスク**: Complete()メソッドの実装でComplete_ShouldMarkAsCompletedテストを通す
+- **次のタスク**: Uncomplete()メソッドの実装でUncomplete_ShouldMarkAsIncompleteテストを通す
 - **TDDフェーズ**: Green Phase継続中（段階的実装）
 
 ## 凡例

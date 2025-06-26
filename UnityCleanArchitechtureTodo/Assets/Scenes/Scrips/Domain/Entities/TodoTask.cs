@@ -47,11 +47,15 @@ namespace UnityCleanArchitectureTodo.Domain.Entities
         
         /// <summary>
         /// タスクを完了状態にする
-        /// TDD: 空の実装（テストが失敗することを確認するため）
+        /// TDD Green Phase: Complete_ShouldMarkAsCompletedテストを通すための実装
         /// </summary>
         public void Complete()
         {
-            // まだ実装しない
+            if (!IsCompleted)
+            {
+                IsCompleted = true;
+                CompletedAt = _timeProvider.GetUtcNow().DateTime;
+            }
         }
         
         /// <summary>
