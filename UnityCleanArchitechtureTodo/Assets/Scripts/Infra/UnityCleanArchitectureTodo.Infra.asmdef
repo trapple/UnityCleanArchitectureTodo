@@ -4,7 +4,9 @@
   "references": [
     "UniTask",
     "VContainer",
-    "UnityCleanArchitectureTodo.Domain"
+    "UnityCleanArchitectureTodo.Domain",
+    "UnityCleanArchitectureTodo.App",
+    "UnityCleanArchitectureTodo.Presentation"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
