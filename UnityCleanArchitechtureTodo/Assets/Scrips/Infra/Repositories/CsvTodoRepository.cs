@@ -87,10 +87,16 @@ namespace UnityCleanArchitectureTodo.Infra.Repositories
         /// 指定されたIDのTodoタスクを削除する
         /// </summary>
         /// <param name="id">削除対象のタスクID</param>
-        public UniTask DeleteAsync(string id)
+        public async UniTask DeleteAsync(string id)
         {
-            // TDD Red Phase - まず失敗する実装
-            throw new System.NotImplementedException();
+            // 既存のタスクリストを取得
+            var existingTasks = (await GetAllAsync()).ToList();
+            
+            // 指定されたIDのタスクを除外してリストを作成
+            var filteredTasks = existingTasks.Where(t => t.Id != id).ToList();
+            
+            // CSVファイルに書き込み（存在しないIDの場合も安全に処理される）
+            await WriteCsvFileAsync(filteredTasks);
         }
 
         /// <summary>
