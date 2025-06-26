@@ -64,14 +64,19 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
   - ✅ DeleteAsync_ExistingTask_ShouldRemoveFromFile テスト
   - ✅ DeleteAsync_NonExistingTask_ShouldNotThrow テスト
 
-### 3.2 CsvTodoRepository の実装
+### 3.2 CsvTodoRepository の実装（TDD Green Phase完了）
 - ✅ CsvTodoRepository.cs作成（空実装 - TDD Red Phase）
-- ⏳ **Next**: CSVファイル操作ロジック実装（TDD Green Phase）
-- ⬜ エラーハンドリング実装
+- ✅ GetAllAsync() - CSV読み込み・パース機能実装
+- ✅ GetByIdAsync() - ID別タスク取得機能実装
+- ✅ SaveAsync() - 新規作成・更新機能実装
+- ✅ DeleteAsync() - タスク削除機能実装
+- ✅ WriteCsvFileAsync() - CSV書き込み機能実装
+- ✅ ParseCsvContent() & ParseCsvLine() - CSVパース機能実装
+- ✅ エラーハンドリング実装（例外安全設計）
 
-## 4. Presentation層の実装（UnitTestなし）
+## 4. Presentation層の実装（E2Eテスト）
 
-- ⬜ TodoListViewModel実装
+- ⏳ **Next**: TodoListViewModel実装
 - ⬜ TodoListPresenter実装
 - ⬜ TodoListView実装
 - ⬜ TodoItemView実装
@@ -90,9 +95,10 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 ---
 
 ## 現在の状況
-- **現在地**: 3.1 CsvTodoRepository のテスト作成・空実装（TDD Red Phase完了）
-- **次のタスク**: 3.2 CsvTodoRepository のCSVファイル操作ロジック実装（TDD Green Phase）
-- **TDDフェーズ**: Infra層TDD継続中（Red → Green移行）
+- **現在地**: 3.2 CsvTodoRepository の完全実装（TDD Green Phase完了）🎉
+- **次のタスク**: 4.1 TodoListViewModel の実装（Presentation層開始）
+- **TDDフェーズ**: Infra層完了 → Presentation層MVVM実装開始
+- **実装済み**: Domain層、App層、Infra層の完全実装（全テスト成功）
 
 ## 凡例
 - ✅ 完了
