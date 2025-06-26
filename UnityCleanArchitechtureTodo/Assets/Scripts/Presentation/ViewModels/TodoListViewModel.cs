@@ -96,7 +96,7 @@ namespace UnityCleanArchitectureTodo.Presentation.ViewModels
         /// <param name="taskId">削除対象のタスクID</param>
         public async UniTask DeleteTodoAsync(string taskId)
         {
-            // 空実装 - TDD Red Phase
+            await _todoUseCase.DeleteAsync(taskId);
         }
 
         /// <summary>

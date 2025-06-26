@@ -83,16 +83,16 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
   - ✅ CreateCommand_WithValidInput_ShouldCreateTask テスト - タスク作成機能完了
   - ✅ CreateCommand_WithEmptyTitle_ShouldNotExecute テスト - バリデーション完了
   - ✅ ToggleCompleteCommand_ShouldToggleTaskState テスト - 完了切り替え機能完了
-  - ⏳ DeleteCommand_ShouldRemoveTask テスト - 次のタスク
-  - ⬜ Operations_ShouldManageLoadingState テスト
-- ⏳ TodoListViewModel.cs実装（TDD Green Phase 5/7完了）
+  - ✅ DeleteCommand_ShouldRemoveTask テスト - タスク削除機能完了
+  - ⏳ Operations_ShouldManageLoadingState テスト - 最後のタスク
+- ⏳ TodoListViewModel.cs実装（TDD Green Phase 6/7完了）
   - ✅ ReactiveProperty による状態管理
   - ✅ ReactiveCommand による操作実装
   - ✅ TodoUseCaseとの連携
   - ✅ CreateTodoAsync() - タスク作成機能（バリデーション付き）
   - ✅ ToggleCompleteAsync() - 完了切り替え機能（メソッド名改善済み）
-  - ⏳ DeleteTodoAsync() - タスク削除機能（次のタスク）
-  - ⬜ LoadingState管理機能
+  - ✅ DeleteTodoAsync() - タスク削除機能
+  - ⏳ LoadingState管理機能 - 最後のタスク
 
 ### 4.2 その他のPresentation層コンポーネント
 - ⬜ TodoListPresenter実装
@@ -114,9 +114,9 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 
 ## 現在の状況
 - **現在地**: 4.1 TodoListViewModelのTDD実装中（Presentation層）
-- **次のタスク**: DeleteTodoAsync()実装（TDD Green Phase 6/7）
-- **TDDフェーズ**: Presentation層MVVM実装継続中（5/7テスト完了）
-- **実装済み**: Domain層、App層、Infra層の完全実装 + ViewModel基本機能（作成・切り替え）
+- **次のタスク**: LoadingState管理機能実装（TDD Green Phase 7/7）
+- **TDDフェーズ**: Presentation層MVVM実装ほぼ完了（6/7テスト完了）
+- **実装済み**: Domain層、App層、Infra層の完全実装 + ViewModel基本機能（CRUD操作完了）
 
 ## 凡例
 - ✅ 完了
