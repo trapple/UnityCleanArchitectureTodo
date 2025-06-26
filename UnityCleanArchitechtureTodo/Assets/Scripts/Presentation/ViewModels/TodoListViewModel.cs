@@ -71,6 +71,12 @@ namespace UnityCleanArchitectureTodo.Presentation.ViewModels
         /// </summary>
         public async UniTask CreateTodoAsync()
         {
+            // タイトルが空の場合は作成しない
+            if (string.IsNullOrWhiteSpace(_newTodoTitle.Value))
+            {
+                return;
+            }
+
             await _todoUseCase.CreateAsync(_newTodoTitle.Value, _newTodoDescription.Value);
             ClearInputs();
         }
