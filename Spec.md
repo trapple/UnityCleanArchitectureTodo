@@ -162,45 +162,81 @@ public class GetAllTodosUseCase
 ```csharp
 public class CsvTodoRepository : ITodoRepository
 {
-    private readonly IDataSource _dataSource;
+    private readonly string _filePath;
     private readonly List<TodoTask> _cachedTodos;
     
-    public CsvTodoRepository(IDataSource dataSource)
-    
-    public async UniTask<IReadOnlyList<TodoTask>> GetAllAsync()
-    public async UniTask<TodoTask> GetByIdAsync(TodoId id)
-    public async UniTask SaveAsync(TodoTask task)
-    public async UniTask DeleteAsync(TodoId id)
-    
-    private async UniTask LoadFromDataSourceAsync()
-    private async UniTask SaveToDataSourceAsync()
-}
-```
-
-#### 4.3.2 DataSource設計
-
-**IDataSource Interface**
-```csharp
-public interface IDataSource
-{
-    UniTask<string> LoadAsync();
-    UniTask SaveAsync(string data);
-}
-```
-
-**FileDataSource実装**
-```csharp
-public class FileDataSource : IDataSource
-{
-    private readonly string _filePath;
-    
-    public FileDataSource()
+    public CsvTodoRepository(string filePath)
     {
-        _filePath = Path.Combine(Application.persistentDataPath, "todos.csv");
+        _filePath = filePath;
+        _cachedTodos = new List<TodoTask>();
     }
     
-    public async UniTask<string> LoadAsync()
-    public async UniTask SaveAsync(string data)
+    public async UniTask<IReadOnlyList<TodoTask>> GetAllAsync()
+    {
+        await LoadFromFileAsync();
+        return _cachedTodos.AsReadOnly();
+    }
+    
+    public async UniTask<TodoTask> GetByIdAsync(string id)
+    {
+        await LoadFromFileAsync();
+        return _cachedTodos.FirstOrDefault(t => t.Id == id);
+    }
+    
+    public async UniTask SaveAsync(TodoTask task)
+    {
+        await LoadFromFileAsync();
+        var existingIndex = _cachedTodos.FindIndex(t => t.Id == task.Id);
+        if (existingIndex >= 0)
+            _cachedTodos[existingIndex] = task;
+        else
+            _cachedTodos.Add(task);
+        await SaveToFileAsync();
+    }
+    
+    public async UniTask DeleteAsync(string id)
+    {
+        await LoadFromFileAsync();
+        _cachedTodos.RemoveAll(t => t.Id == id);
+        await SaveToFileAsync();
+    }
+    
+    private async UniTask LoadFromFileAsync()
+    {
+        if (!File.Exists(_filePath))
+        {
+            _cachedTodos.Clear();
+            return;
+        }
+        
+        var csvContent = await File.ReadAllTextAsync(_filePath);
+        var lines = csvContent.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        
+        _cachedTodos.Clear();
+        // Skip header line
+        foreach (var line in lines.Skip(1))
+        {
+            var task = CsvHelper.FromCsvLine(line);
+            if (task != null)
+                _cachedTodos.Add(task);
+        }
+    }
+    
+    private async UniTask SaveToFileAsync()
+    {
+        var directory = Path.GetDirectoryName(_filePath);
+        if (!Directory.Exists(directory))
+            Directory.CreateDirectory(directory);
+        
+        var csvLines = new List<string>
+        {
+            "Id,Title,Description,IsCompleted,CreatedAtTicks,CompletedAtTicks"
+        };
+        
+        csvLines.AddRange(_cachedTodos.Select(CsvHelper.ToCsvLine));
+        
+        await File.WriteAllTextAsync(_filePath, string.Join("\n", csvLines));
+    }
 }
 ```
 
@@ -295,11 +331,9 @@ public class TodoAppLifetimeScope : LifetimeScope
 {
     protected override void Configure(IContainerBuilder builder)
     {
-        // DataSource
-        builder.Register<IDataSource, FileDataSource>(Lifetime.Singleton);
-        
         // Repository
-        builder.Register<ITodoRepository, CsvTodoRepository>(Lifetime.Singleton);
+        builder.Register<ITodoRepository, CsvTodoRepository>(Lifetime.Singleton)
+            .WithParameter("filePath", Path.Combine(Application.persistentDataPath, "todos.csv"));
         
         // UseCases
         builder.Register<GetAllTodosUseCase>(Lifetime.Transient);
@@ -375,9 +409,8 @@ public static class CsvHelper
    - 各UseCase実装
 
 3. **Infra層の実装**
-   - IDataSource Interface
-   - FileDataSource実装
    - CsvTodoRepository実装
+   - CSVファイル操作ロジック
 
 4. **Presentation層の実装**
    - TodoListPresenter実装
