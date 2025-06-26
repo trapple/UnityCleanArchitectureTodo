@@ -96,13 +96,12 @@ namespace UnityCleanArchitectureTodo.Domain.Entities
         
         /// <summary>
         /// 新しいIDを生成する
-        /// TDD: 空の実装（テストが失敗することを確認するため）
+        /// TDD Green Phase: GenerateNewId_ShouldReturnNonEmptyStringテストを通すための実装
         /// </summary>
         /// <returns>生成されたID</returns>
         public static string GenerateNewId()
         {
-            // まだ実装しない
-            return null;
+            return Guid.NewGuid().ToString();
         }
     }
 }

@@ -21,8 +21,8 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 - ✅ Uncomplete()メソッド実装
 - ✅ UpdateTitle()メソッド実装
 - ✅ UpdateDescription()メソッド実装
-- ⏳ **Next**: GenerateNewId()静的メソッド実装
-- ⬜ Refactor: コードの改善
+- ✅ GenerateNewId()静的メソッド実装
+- ⏳ **Next**: Refactor: コードの改善
 
 ### 1.3 ITodoRepository Interface
 - ⬜ ITodoRepository.cs作成
@@ -78,8 +78,8 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 
 ## 現在の状況
 - **現在地**: 1.2 TodoTask Entity の実装（TDD Green Phase）
-- **次のタスク**: GenerateNewId()静的メソッドの実装でGenerateNewId_ShouldReturnNonEmptyStringテストを通す
-- **TDDフェーズ**: Green Phase継続中（段階的実装）
+- **次のタスク**: TodoTask Entityのリファクタリング（TDD Refactor phase）
+- **TDDフェーズ**: Green Phase完了 → Refactor Phase準備
 
 ## 凡例
 - ✅ 完了
