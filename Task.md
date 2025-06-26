@@ -25,16 +25,16 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 - ✅ Refactor: ID自動生成による設計改善
 
 ### 1.3 ITodoRepository Interface
-- ⏳ **Next**: ITodoRepository.cs作成
-- ⬜ GetAllAsync()メソッド定義
-- ⬜ GetByIdAsync()メソッド定義
-- ⬜ SaveAsync()メソッド定義
-- ⬜ DeleteAsync()メソッド定義
+- ✅ ITodoRepository.cs作成
+- ✅ GetAllAsync()メソッド定義
+- ✅ GetByIdAsync()メソッド定義
+- ✅ SaveAsync()メソッド定義
+- ✅ DeleteAsync()メソッド定義
 
 ## 2. App層の実装（TDD）
 
 ### 2.1 GetAllTodosUseCase のテスト
-- ⬜ GetAllTodosUseCaseTest.cs作成
+- ⏳ **Next**: GetAllTodosUseCaseTest.cs作成
 - ⬜ ExecuteAsync_ShouldReturnAllTodos テスト
 
 ### 2.2 各UseCase のテストと実装
@@ -77,9 +77,9 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 ---
 
 ## 現在の状況
-- **現在地**: 1.2 TodoTask Entity の実装（TDD Refactor Phase完了）
-- **次のタスク**: 1.3 ITodoRepository Interface の定義
-- **TDDフェーズ**: Refactor Phase完了 → Domain層完了
+- **現在地**: 1.3 ITodoRepository Interface の定義（完了）
+- **次のタスク**: 2.1 GetAllTodosUseCase のテスト作成
+- **TDDフェーズ**: Domain層完了 → App層TDD開始
 
 ## 凡例
 - ✅ 完了

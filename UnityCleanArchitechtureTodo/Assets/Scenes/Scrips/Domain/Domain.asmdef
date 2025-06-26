@@ -1,7 +1,9 @@
 {
     "name": "Domain",
     "rootNamespace": "UnityCleanArchitectureTodo.Domain",
-    "references": [],
+    "references": [
+        "UniTask"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
