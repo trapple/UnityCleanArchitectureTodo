@@ -77,6 +77,14 @@ Presentation → App → Domain ← Infra
 - Domainレイヤーは他のレイヤーに依存しない
 - Infraレイヤーは依存関係逆転の原則によってDomainレイヤーのインターフェースを実装
 
+### 3.3 ライブラリ依存関係ルール
+
+- **Domainレイヤー**: UniTask、R3、VContainerに依存しない（純粋なC#のみ）
+- **App、Infra、Presentationレイヤー**: UniTask、R3、VContainerに依存可能
+  - UniTask: 非同期処理の実装
+  - R3: リアクティブプログラミングの実装
+  - VContainer: 依存性注入の実装
+
 ## 4. 詳細設計
 
 ### 4.1 Domainレイヤー
