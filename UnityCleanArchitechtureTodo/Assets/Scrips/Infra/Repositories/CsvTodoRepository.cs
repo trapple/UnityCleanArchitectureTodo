@@ -49,10 +49,11 @@ namespace UnityCleanArchitectureTodo.Infra.Repositories
         /// 指定されたIDのTodoタスクを取得する
         /// </summary>
         /// <param name="id">取得対象のタスクID</param>
-        public UniTask<TodoTask> GetByIdAsync(string id)
+        public async UniTask<TodoTask> GetByIdAsync(string id)
         {
-            // TDD Red Phase - まず失敗する実装
-            throw new System.NotImplementedException();
+            // 全タスクを取得してから指定されたIDを検索
+            var allTasks = await GetAllAsync();
+            return allTasks.FirstOrDefault(task => task.Id == id);
         }
 
         /// <summary>
