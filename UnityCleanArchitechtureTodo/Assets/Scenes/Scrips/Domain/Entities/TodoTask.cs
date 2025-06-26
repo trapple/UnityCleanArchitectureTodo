@@ -8,6 +8,8 @@ namespace UnityCleanArchitectureTodo.Domain.Entities
     /// </summary>
     public class TodoTask
     {
+        private readonly TimeProvider _timeProvider;
+        
         public string Id { get; }
         public string Title { get; private set; }
         public string Description { get; private set; }
@@ -22,7 +24,8 @@ namespace UnityCleanArchitectureTodo.Domain.Entities
         /// <param name="id">タスクID</param>
         /// <param name="title">タスクタイトル</param>
         /// <param name="description">タスク説明</param>
-        public TodoTask(string id, string title, string description)
+        /// <param name="timeProvider">時刻プロバイダー（テスト可能性のため）</param>
+        public TodoTask(string id, string title, string description, TimeProvider timeProvider = null)
         {
             // バリデーション
             if (string.IsNullOrWhiteSpace(id))
@@ -30,12 +33,15 @@ namespace UnityCleanArchitectureTodo.Domain.Entities
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentException("タイトルは必須です", nameof(title));
             
+            // TimeProvider設定（nullの場合はデフォルト）
+            _timeProvider = timeProvider ?? TimeProvider.System;
+            
             // プロパティ設定
             Id = id;
             Title = title;
             Description = description ?? "";
             IsCompleted = false;
-            CreatedAt = DateTime.Now;
+            CreatedAt = _timeProvider.GetUtcNow().DateTime;
             CompletedAt = null;
         }
         
