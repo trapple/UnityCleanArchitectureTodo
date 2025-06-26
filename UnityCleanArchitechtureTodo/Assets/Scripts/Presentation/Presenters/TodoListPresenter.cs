@@ -80,10 +80,10 @@ namespace UnityCleanArchitectureTodo.Presentation.Presenters
             {
                 // UseCaseを直接呼び出してタスク作成
                 await _todoUseCase.CreateAsync(_viewModel.NewTodoTitle.Value, _viewModel.NewTodoDescription.Value);
-                
+
                 // 入力フィールドをクリア
                 _viewModel.ClearInputs();
-                
+
                 // 作成後にリストを再読み込み
                 await LoadTodosAsync();
             }
@@ -104,7 +104,7 @@ namespace UnityCleanArchitectureTodo.Presentation.Presenters
             {
                 // UseCaseを直接呼び出して完了状態切り替え
                 await _todoUseCase.ToggleCompleteAsync(taskId);
-                
+
                 // 切り替え後にリストを再読み込み
                 await LoadTodosAsync();
             }
@@ -125,7 +125,7 @@ namespace UnityCleanArchitectureTodo.Presentation.Presenters
             {
                 // UseCaseを直接呼び出してタスク削除
                 await _todoUseCase.DeleteAsync(taskId);
-                
+
                 // 削除後にリストを再読み込み
                 await LoadTodosAsync();
             }

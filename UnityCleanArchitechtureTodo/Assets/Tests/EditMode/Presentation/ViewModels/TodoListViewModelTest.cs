@@ -42,7 +42,7 @@ namespace UnityCleanArchitectureTodo.Tests.Presentation.ViewModels
             Assert.IsFalse(_viewModel.IsLoading.CurrentValue, "初期状態でIsLoadingはfalseであるべき");
             Assert.AreEqual("", _viewModel.NewTodoTitle.Value, "初期状態でNewTodoTitleは空文字であるべき");
             Assert.AreEqual("", _viewModel.NewTodoDescription.Value, "初期状態でNewTodoDescriptionは空文字であるべき");
-            
+
             // Commands の初期化確認
             Assert.IsNotNull(_viewModel.CreateTodoCommand, "CreateTodoCommandが初期化されているべき");
             Assert.IsNotNull(_viewModel.ToggleCompleteCommand, "ToggleCompleteCommandが初期化されているべき");
@@ -157,7 +157,7 @@ namespace UnityCleanArchitectureTodo.Tests.Presentation.ViewModels
 
             // Act - 非同期操作を開始（待機しない）
             var loadTask = _viewModel.LoadTasksAsync();
-            
+
             // Assert - 操作開始直後はIsLoadingがtrueになることを確認
             Assert.IsTrue(_viewModel.IsLoading.CurrentValue, "操作中はIsLoadingがtrueになるべき");
 
@@ -166,7 +166,7 @@ namespace UnityCleanArchitectureTodo.Tests.Presentation.ViewModels
 
             // Assert - 操作完了後はIsLoadingがfalseに戻ることを確認
             Assert.IsFalse(_viewModel.IsLoading.CurrentValue, "操作完了後はIsLoadingがfalseになるべき");
-            
+
             // 遅延をリセットして複数回の操作をテスト
             _mockRepository.DelayMilliseconds = 0;
             await _viewModel.LoadTasksAsync();
@@ -183,7 +183,7 @@ namespace UnityCleanArchitectureTodo.Tests.Presentation.ViewModels
         public bool SaveAsyncCalled { get; set; }
         public bool DeleteAsyncCalled { get; set; }
         public string LastDeletedId { get; set; }
-        
+
         // 遅延設定用プロパティ
         public int DelayMilliseconds { get; set; } = 0;
 
@@ -198,6 +198,7 @@ namespace UnityCleanArchitectureTodo.Tests.Presentation.ViewModels
             {
                 await UniTask.Delay(DelayMilliseconds);
             }
+
             return _tasks.AsReadOnly();
         }
 
@@ -215,6 +216,7 @@ namespace UnityCleanArchitectureTodo.Tests.Presentation.ViewModels
             {
                 _tasks.Remove(existing);
             }
+
             _tasks.Add(task);
             return UniTask.CompletedTask;
         }

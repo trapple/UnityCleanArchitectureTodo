@@ -34,7 +34,7 @@ namespace UnityCleanArchitectureTodo.Infra.Repositories
 
             // ファイルの内容を読み込み
             var fileContent = await File.ReadAllTextAsync(_filePath);
-            
+
             // ファイルが空の場合は空のリストを返す
             if (string.IsNullOrEmpty(fileContent))
             {
@@ -64,10 +64,10 @@ namespace UnityCleanArchitectureTodo.Infra.Repositories
         {
             // 既存のタスクリストを取得
             var existingTasks = (await GetAllAsync()).ToList();
-            
+
             // 同じIDのタスクが存在するかチェック
             var existingIndex = existingTasks.FindIndex(t => t.Id == task.Id);
-            
+
             if (existingIndex >= 0)
             {
                 // 既存タスクを更新
@@ -78,7 +78,7 @@ namespace UnityCleanArchitectureTodo.Infra.Repositories
                 // 新規タスクを追加
                 existingTasks.Add(task);
             }
-            
+
             // CSVファイルに書き込み
             await WriteCsvFileAsync(existingTasks);
         }
@@ -91,10 +91,10 @@ namespace UnityCleanArchitectureTodo.Infra.Repositories
         {
             // 既存のタスクリストを取得
             var existingTasks = (await GetAllAsync()).ToList();
-            
+
             // 指定されたIDのタスクを除外してリストを作成
             var filteredTasks = existingTasks.Where(t => t.Id != id).ToList();
-            
+
             // CSVファイルに書き込み（存在しないIDの場合も安全に処理される）
             await WriteCsvFileAsync(filteredTasks);
         }
@@ -108,7 +108,7 @@ namespace UnityCleanArchitectureTodo.Infra.Repositories
         {
             var tasks = new List<TodoTask>();
             var lines = csvContent.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-            
+
             // ヘッダー行をスキップ（最初の行）
             if (lines.Length <= 1)
             {
@@ -156,8 +156,8 @@ namespace UnityCleanArchitectureTodo.Infra.Repositories
             var isCompleted = bool.Parse(fields[3].Trim());
             var createdAt = DateTime.Parse(fields[4].Trim(), null, DateTimeStyles.RoundtripKind);
             var completedAtStr = fields[5].Trim();
-            DateTime? completedAt = string.IsNullOrEmpty(completedAtStr) 
-                ? null 
+            DateTime? completedAt = string.IsNullOrEmpty(completedAtStr)
+                ? null
                 : DateTime.Parse(completedAtStr, null, DateTimeStyles.RoundtripKind);
 
             // 復元用コンストラクタを使用してTodoTaskを作成
@@ -171,18 +171,19 @@ namespace UnityCleanArchitectureTodo.Infra.Repositories
         private async UniTask WriteCsvFileAsync(IList<TodoTask> tasks)
         {
             var csvLines = new List<string>();
-            
+
             // ヘッダー行を追加
             csvLines.Add("Id,Title,Description,IsCompleted,CreatedAt,CompletedAt");
-            
+
             // 各タスクをCSV行に変換
             foreach (var task in tasks)
             {
                 var completedAtStr = task.CompletedAt?.ToString("O") ?? "";
-                var csvLine = $"{task.Id},{task.Title},{task.Description},{task.IsCompleted},{task.CreatedAt:O},{completedAtStr}";
+                var csvLine =
+                    $"{task.Id},{task.Title},{task.Description},{task.IsCompleted},{task.CreatedAt:O},{completedAtStr}";
                 csvLines.Add(csvLine);
             }
-            
+
             // ファイルに書き込み
             var csvContent = string.Join("\n", csvLines);
             await File.WriteAllTextAsync(_filePath, csvContent);

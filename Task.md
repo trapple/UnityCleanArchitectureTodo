@@ -102,8 +102,17 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
   - ✅ CRUD操作の完全実装（Create, Toggle, Delete, Load）
   - ✅ エラーハンドリングとリソース管理
   - ✅ 自動データリロード機能
-- ⏳ **Next**: TodoListView実装（E2Eテスト対象）
-- ⬜ TodoItemView実装（E2Eテスト対象）
+- ✅ TodoListView実装完了🎉
+  - ✅ Unity UIコンポーネント統合（TMP_InputField, Button, Transform等）
+  - ✅ VContainer依存性注入によるViewModel取得
+  - ✅ R3双方向バインディング実装（ReactiveProperty ↔ UI）
+  - ✅ 動的TodoItemView管理（生成・削除・クリーンアップ）
+  - ✅ Loading状態表示、タスク数統計、デバッグ機能
+- ✅ TodoItemView実装完了🎉
+  - ✅ 個別Todoタスク表示・操作機能
+  - ✅ 視覚的フィードバック（完了状態の色変更・打ち消し線）
+  - ✅ リアクティブUIイベント処理（Toggle, Button）
+  - ✅ 完了オーバーレイとカスタマイズ可能な視覚設定
 
 ## 5. DI設定の実装
 
@@ -119,10 +128,10 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 ---
 
 ## 現在の状況
-- **現在地**: 4.2 TodoListView実装準備（Presentation層UI構築）
-- **次のタスク**: TodoListView実装（Unity UI + E2Eテスト）
-- **TDDフェーズ**: MVVM完全完了🎉 → UI層実装 + DI設定開始
-- **実装済み**: Domain層、App層、Infra層、MVVM層（ViewModel + Presenter）の完全実装
+- **現在地**: 5. DI設定の実装準備（VContainer LifetimeScope）
+- **次のタスク**: TodoAppLifetimeScope実装（依存関係配線）
+- **TDDフェーズ**: Presentation層完全完了🎉 → DI設定 + Scene構築
+- **実装済み**: Clean Architecture全層完成（Domain, App, Infra, Presentation: MVVM + UI）
 
 ## 凡例
 - ✅ 完了

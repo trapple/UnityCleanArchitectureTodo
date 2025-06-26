@@ -53,7 +53,7 @@ namespace UnityCleanArchitectureTodo.Domain.Entities
         /// <param name="createdAt">作成日時（nullの場合は現在時刻）</param>
         /// <param name="completedAt">完了日時</param>
         /// <param name="timeProvider">時刻プロバイダー（テスト可能性のため）</param>
-        public TodoTask(string id, string title, string description, bool isCompleted, 
+        public TodoTask(string id, string title, string description, bool isCompleted,
             DateTime? createdAt = null, DateTime? completedAt = null, TimeProvider timeProvider = null)
         {
             // バリデーション
