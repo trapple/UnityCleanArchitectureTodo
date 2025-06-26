@@ -38,8 +38,8 @@ namespace UnityCleanArchitectureTodo.Presentation.ViewModels
             _todoUseCase = todoUseCase;
 
             // ReadOnlyReactivePropertyを初期化
-            Todos = _todos.ToReadOnlyReactiveProperty();
-            IsLoading = _isLoading.ToReadOnlyReactiveProperty();
+            Todos = _todos.AsReadOnly();
+            IsLoading = _isLoading.AsReadOnly();
 
             // Commands初期化（空実装）
             CreateTodoCommand = new ReactiveCommand();
@@ -65,7 +65,8 @@ namespace UnityCleanArchitectureTodo.Presentation.ViewModels
         /// </summary>
         public async UniTask LoadTasksAsync()
         {
-            // 空実装 - TDD Red Phase
+            var tasks = await _todoUseCase.GetAllAsync();
+            _todos.Value = tasks;
         }
 
         /// <summary>
@@ -73,7 +74,8 @@ namespace UnityCleanArchitectureTodo.Presentation.ViewModels
         /// </summary>
         public async UniTask CreateTodoAsync()
         {
-            // 空実装 - TDD Red Phase
+            await _todoUseCase.CreateAsync(_newTodoTitle.Value, _newTodoDescription.Value);
+            ClearInputs();
         }
 
         /// <summary>
@@ -99,7 +101,8 @@ namespace UnityCleanArchitectureTodo.Presentation.ViewModels
         /// </summary>
         public void ClearInputs()
         {
-            // 空実装 - TDD Red Phase
+            _newTodoTitle.Value = "";
+            _newTodoDescription.Value = "";
         }
 
         public void Dispose()

@@ -77,9 +77,9 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 ## 4. Presentation層の実装（TDD + E2E）
 
 ### 4.1 TodoListViewModel の実装（TDD）
-- ⏳ **Next**: TodoListViewModelTest.cs作成（TDD Red Phase）
-  - ⬜ Initialize_ShouldSetDefaultValues テスト
-  - ⬜ LoadTasks_ShouldUpdateTodosProperty テスト
+- ⏳ **Current**: TodoListViewModel.cs実装（TDD Green Phase）
+  - ✅ Initialize_ShouldSetDefaultValues テスト - 基本的な初期化完了
+  - ✅ LoadTasks_ShouldUpdateTodosProperty テスト - タスク読み込み機能完了
   - ⬜ CreateCommand_WithValidInput_ShouldCreateTask テスト
   - ⬜ ToggleCompleteCommand_ShouldToggleTaskState テスト
   - ⬜ DeleteCommand_ShouldRemoveTask テスト
