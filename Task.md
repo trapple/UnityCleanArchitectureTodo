@@ -74,12 +74,26 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 - ✅ ParseCsvContent() & ParseCsvLine() - CSVパース機能実装
 - ✅ エラーハンドリング実装（例外安全設計）
 
-## 4. Presentation層の実装（E2Eテスト）
+## 4. Presentation層の実装（TDD + E2E）
 
-- ⏳ **Next**: TodoListViewModel実装
+### 4.1 TodoListViewModel の実装（TDD）
+- ⏳ **Next**: TodoListViewModelTest.cs作成（TDD Red Phase）
+  - ⬜ Initialize_ShouldSetDefaultValues テスト
+  - ⬜ LoadTasks_ShouldUpdateTodosProperty テスト
+  - ⬜ CreateCommand_WithValidInput_ShouldCreateTask テスト
+  - ⬜ ToggleCompleteCommand_ShouldToggleTaskState テスト
+  - ⬜ DeleteCommand_ShouldRemoveTask テスト
+  - ⬜ CreateCommand_WithEmptyTitle_ShouldNotExecute テスト
+  - ⬜ Operations_ShouldManageLoadingState テスト
+- ⬜ TodoListViewModel.cs実装（TDD Green Phase）
+  - ⬜ ReactiveProperty による状態管理
+  - ⬜ ReactiveCommand による操作実装
+  - ⬜ TodoUseCaseとの連携
+
+### 4.2 その他のPresentation層コンポーネント
 - ⬜ TodoListPresenter実装
-- ⬜ TodoListView実装
-- ⬜ TodoItemView実装
+- ⬜ TodoListView実装（E2Eテスト対象）
+- ⬜ TodoItemView実装（E2Eテスト対象）
 
 ## 5. DI設定の実装
 
@@ -95,8 +109,8 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 ---
 
 ## 現在の状況
-- **現在地**: 3.2 CsvTodoRepository の完全実装（TDD Green Phase完了）🎉
-- **次のタスク**: 4.1 TodoListViewModel の実装（Presentation層開始）
+- **現在地**: 4.1 TodoListViewModelのTDD開始準備（Presentation層開始）
+- **次のタスク**: TodoListViewModelTest.cs作成（TDD Red Phase）
 - **TDDフェーズ**: Infra層完了 → Presentation層MVVM実装開始
 - **実装済み**: Domain層、App層、Infra層の完全実装（全テスト成功）
 

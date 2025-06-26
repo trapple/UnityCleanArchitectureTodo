@@ -613,7 +613,7 @@ public static class CsvHelper
 - **Domain層**: Entity の振る舞いをテスト（必須）
 - **App層**: UseCase をモックRepository でテスト（必須）
 - **Infra層**: 一時ファイルを使った Repository のテスト（CsvTodoRepository等、テスタブルな場合）
-- **Presentation層**: E2Eテストで統合的に確認（UI操作からビジネスロジック実行まで）
+- **Presentation層**: ViewModelのTDDテスト + E2Eテストで統合的に確認（UI操作からビジネスロジック実行まで）
 
 ### 7.2 推奨実装順序
 
@@ -684,11 +684,48 @@ public async Task GetAllAsync_EmptyFile_ShouldReturnEmptyList()
 - CSVファイル操作ロジック
 - エラーハンドリングの実装
 
-#### 4. **Presentation層の実装（UnitTestなし）**
-- TodoListViewModel実装
-- TodoListPresenter実装
-- TodoListView実装
-- TodoItemView実装
+#### 4. **Presentation層の実装（TDD + E2E）**
+
+**4.1 TodoListViewModel のテスト（TDD）**
+```csharp
+[TestFixture]
+public class TodoListViewModelTest
+{
+    [UnityTest]
+    public IEnumerator Initialize_ShouldSetDefaultValues()
+    
+    [UnityTest] 
+    public IEnumerator LoadTasks_ShouldUpdateTodosProperty()
+    
+    [UnityTest]
+    public IEnumerator CreateCommand_WithValidInput_ShouldCreateTask()
+    
+    [UnityTest]
+    public IEnumerator ToggleCompleteCommand_ShouldToggleTaskState()
+    
+    [UnityTest]
+    public IEnumerator DeleteCommand_ShouldRemoveTask()
+    
+    [UnityTest]
+    public IEnumerator CreateCommand_WithEmptyTitle_ShouldNotExecute()
+    
+    [UnityTest]
+    public IEnumerator Operations_ShouldManageLoadingState()
+}
+```
+
+**4.2 TodoListViewModel の実装**
+- R3 ReactiveProperty による状態管理
+- ReactiveCommand による操作実装
+- UseCaseとの連携
+
+**4.3 TodoListPresenter の実装**
+- ViewModelとUseCaseの橋渡し
+- 初期化時の自動データ読み込み
+
+**4.4 TodoListView & TodoItemView の実装**
+- Unity UI との連携
+- E2Eテストで動作検証
 
 #### 5. **DI設定の実装**
 - TodoAppLifetimeScope実装
@@ -779,7 +816,58 @@ public class CsvTodoRepositoryTest
 }
 ```
 
-#### 7.3.4 E2E Test（Presentation層統合テスト）
+#### 7.3.4 Unit Test（Presentation層）
+```csharp
+// TodoListViewModelTest.cs
+[TestFixture]
+public class TodoListViewModelTest
+{
+    private MockTodoUseCase _mockUseCase;
+    private TodoListViewModel _viewModel;
+    
+    [SetUp]
+    public void SetUp()
+    {
+        _mockUseCase = new MockTodoUseCase();
+        _viewModel = new TodoListViewModel(_mockUseCase);
+    }
+    
+    [UnityTest]
+    public IEnumerator Initialize_ShouldSetDefaultValues() => UniTask.ToCoroutine(async () =>
+    {
+        // ReactivePropertyの初期値確認
+        Assert.AreEqual(0, _viewModel.Todos.Value.Count);
+        Assert.IsFalse(_viewModel.IsLoading.Value);
+        Assert.AreEqual("", _viewModel.NewTodoTitle.Value);
+    });
+    
+    [UnityTest]
+    public IEnumerator CreateCommand_WithValidInput_ShouldCreateTask() => UniTask.ToCoroutine(async () =>
+    {
+        // 新規作成コマンドのテスト
+        _viewModel.NewTodoTitle.Value = "テストタスク";
+        _viewModel.NewTodoDescription.Value = "テスト説明";
+        
+        await _viewModel.CreateTodoCommand.ExecuteAsync();
+        
+        Assert.IsTrue(_mockUseCase.CreateAsyncCalled);
+        Assert.AreEqual("", _viewModel.NewTodoTitle.Value); // 入力クリア確認
+    });
+    
+    [UnityTest]
+    public IEnumerator ToggleCompleteCommand_ShouldToggleTaskState() => UniTask.ToCoroutine(async () =>
+    {
+        // 完了切り替えコマンドのテスト
+        var taskId = "test-id";
+        await _viewModel.ToggleCompleteCommand.ExecuteAsync(taskId);
+        
+        Assert.IsTrue(_mockUseCase.CompleteAsyncCalled);
+        Assert.AreEqual(taskId, _mockUseCase.LastCompletedId);
+    });
+}
+```
+
+#### 7.3.5 E2E Test（Presentation層統合テスト）
 ```csharp
 // TodoAppE2ETest.cs
 [TestFixture]
