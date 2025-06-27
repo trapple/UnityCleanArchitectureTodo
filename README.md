@@ -36,7 +36,7 @@ UnityでClean ArchitectureパターンとMVVMアーキテクチャを適用し�
 
 #### 🎯 View (Unity UI)
 - **役割**: UI表示とユーザー入力の受付
-- **技術**: Unity UI Components + TextMeshPro
+- **技術**: Unity UI Components
 - **特徴**: ViewModelとの双方向データバインディング
 
 ```csharp
@@ -110,7 +110,6 @@ public class TodoListPresenter : IStartable, IDisposable
 - **R3** - リアクティブプログラミングライブラリ
 
 ### UI・表示
-- **TextMeshPro** - 高品質テキスト表示
 - **NotoSansJP** - 日本語フォント対応
 - **SafeAreaHandler** - モバイル端末SafeArea自動対応
 
@@ -176,8 +175,7 @@ UnityCleanArchitechtureTodo/
   "dependencies": {
     "com.cysharp.unitask": "2.5.10",
     "jp.cysharp.vcontainer": "1.16.9", 
-    "com.cysharp.r3": "1.3.0",
-    "com.unity.textmeshpro": "3.0.6"
+    "com.cysharp.r3": "1.3.0"
   }
 }
 ```
