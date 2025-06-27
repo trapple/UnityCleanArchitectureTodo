@@ -97,6 +97,47 @@ public class TodoListPresenter : IStartable, IDisposable
 }
 ```
 
+#### 🏛️ 依存関係逆転の原則（SOLID-D）実装
+- **役割**: Domain層とInfra層の疎結合を実現
+- **技術**: インターフェースという抽象化に対する依存
+- **特徴**: Domain層はRepositoryの抽象に依存し、実装詳細を知らない設計
+
+```csharp
+// Domain層: インターフェース定義（抽象化）
+namespace UnityCleanArchitectureTodo.Domain.Repositories
+{
+    public interface ITodoRepository
+    {
+        UniTask<IReadOnlyList<TodoTask>> GetAllAsync();
+        UniTask SaveAsync(TodoTask task);
+        UniTask DeleteAsync(string id);
+    }
+}
+
+// Infrastructure層: 具象実装（詳細）
+namespace UnityCleanArchitectureTodo.Infra.Repositories  
+{
+    public class CsvTodoRepository : ITodoRepository
+    {
+        // CSVファイル永続化の具体的実装
+        public async UniTask<IReadOnlyList<TodoTask>> GetAllAsync() { ... }
+    }
+}
+```
+
+#### 🔄 依存関係の流れ
+```
+Application層 → Domain層（ITodoRepository）← Infrastructure層（CsvTodoRepository）
+     ↓              ↓                              ↓
+  ビジネス        抽象化                      技術実装詳細
+  ロジック     インターフェース               （CSV, DB等）
+```
+
+**メリット**:
+- **テスタビリティ**: Mockオブジェクトでの単体テスト容易
+- **拡張性（SOLID-O）**: CSV → Database切り替え時、Domain/App層に影響なし  
+- **保守性**: ビジネスロジックと技術詳細の完全分離
+
 ## 🛠️ 技術スタック
 
 ### Core Framework
@@ -195,47 +236,6 @@ UnityCleanArchitechtureTodo/
 - **依存関係の流れ**: Presentation → Application → Domain ← Infrastructure
 - **依存関係逆転の原則**: InfrastructureがDomainのインターフェースに依存
 - **レイヤー間の疎結合**: Assembly Definition Filesによる強制分離
-
-#### 🏛️ 依存関係逆転の原則（SOLID-D）実装
-- **役割**: Domain層とInfra層の疎結合を実現
-- **技術**: インターフェース分離による抽象化
-- **特徴**: ビジネスロジックが技術詳細に依存しない設計
-
-```csharp
-// Domain層: インターフェース定義（抽象化）
-namespace UnityCleanArchitectureTodo.Domain.Repositories
-{
-    public interface ITodoRepository
-    {
-        UniTask<IReadOnlyList<TodoTask>> GetAllAsync();
-        UniTask SaveAsync(TodoTask task);
-        UniTask DeleteAsync(string id);
-    }
-}
-
-// Infrastructure層: 具象実装（詳細）
-namespace UnityCleanArchitectureTodo.Infra.Repositories  
-{
-    public class CsvTodoRepository : ITodoRepository
-    {
-        // CSVファイル永続化の具体的実装
-        public async UniTask<IReadOnlyList<TodoTask>> GetAllAsync() { ... }
-    }
-}
-```
-
-#### 🔄 依存関係の流れ
-```
-Application層 → Domain層（ITodoRepository）← Infrastructure層（CsvTodoRepository）
-     ↓              ↓                              ↓
-  ビジネス        抽象化                      技術実装詳細
-  ロジック     インターフェース               （CSV, DB等）
-```
-
-**メリット**:
-- **テスタビリティ**: Mockオブジェクトでの単体テスト容易
-- **拡張性**: CSV → Database切り替え時、Domain/App層に影響なし  
-- **保守性**: ビジネスロジックと技術詳細の完全分離
 
 ### MVVM + リアクティブプログラミング
 - **View**: UIコンポーネントとイベント処理
