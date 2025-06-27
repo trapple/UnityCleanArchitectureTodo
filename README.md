@@ -32,7 +32,75 @@ UnityでClean ArchitectureパターンとMVVMアーキテクチャを適用し�
 └─────────────────────────────────────────────────────────┘
 ```
 
-### MVVMアーキテクチャの詳細実装
+### Clean Architectureの詳細実装
+
+#### 🏗️ Domain層（ビジネスルール）
+- **役割**: ビジネスロジックとエンティティの管理
+- **技術**: C# Pure Classes + Interfaces
+- **特徴**: 外部依存ゼロ、最も内側の層
+
+```csharp
+// エンティティ：ビジネスの核となるオブジェクト
+public class TodoTask
+{
+    public string Id { get; }
+    public string Title { get; private set; }
+    public bool IsCompleted { get; private set; }
+    
+    // ビジネスルールをメソッドとして表現
+    public void Complete() => IsCompleted = true;
+    public void UpdateTitle(string newTitle) { /* バリデーション + 更新 */ }
+}
+
+// リポジトリインターフェース：データアクセスの抽象化
+public interface ITodoRepository
+{
+    UniTask<IReadOnlyList<TodoTask>> GetAllAsync();
+    UniTask SaveAsync(TodoTask task);
+}
+```
+
+#### 🎯 Application層（ユースケース）
+- **役割**: アプリケーション固有のビジネスロジック
+- **技術**: Domain Entities + Repository Interfaces
+- **特徴**: 外部世界との橋渡し、オーケストレーション
+
+```csharp
+public class TodoUseCase
+{
+    private readonly ITodoRepository _repository;
+    
+    // アプリケーション固有のビジネスフロー
+    public async UniTask CreateAsync(string title, string description)
+    {
+        var task = new TodoTask(title, description); // Domain Entity使用
+        await _repository.SaveAsync(task); // Repository Interface使用
+    }
+    
+    // 複数のDomainオブジェクトを組み合わせた処理
+    public async UniTask<IReadOnlyList<TodoTask>> GetAllAsync()
+        => await _repository.GetAllAsync();
+}
+```
+
+#### 🔧 Infrastructure層（技術詳細）
+- **役割**: 外部システムとの実際の通信
+- **技術**: File I/O, Database, Web API等
+- **特徴**: Domain Interfaceの具象実装、最も外側の層
+
+```csharp
+public class CsvTodoRepository : ITodoRepository
+{
+    // 具体的な永続化技術（CSV）
+    public async UniTask<IReadOnlyList<TodoTask>> GetAllAsync()
+    {
+        var csvContent = await File.ReadAllTextAsync(_filePath);
+        return ParseCsvToTodoTasks(csvContent); // CSV固有のロジック
+    }
+}
+```
+
+### MVVMアーキテクチャの詳細実装（Presentation層）
 
 #### 🎯 View (Unity UI)
 - **役割**: UI表示とユーザー入力の受付
@@ -150,13 +218,8 @@ Application層 → Domain層（ITodoRepository）← Infrastructure層（CsvTodo
 - **UniTask** - 高性能非同期処理ライブラリ
 - **R3** - リアクティブプログラミングライブラリ
 
-### UI・表示
-- **NotoSansJP** - 日本語フォント対応
-- **SafeAreaHandler** - モバイル端末SafeArea自動対応
-
 ### 開発・品質保証
 - **TDD (Test-Driven Development)** - テスト駆動開発
-- **EditorScript** - UI構築自動化ツール
 - **Assembly Definition Files** - レイヤー分離の強制
 
 ## 🎯 主要機能
@@ -168,14 +231,6 @@ Application層 → Domain層（ITodoRepository）← Infrastructure層（CsvTodo
 - ✅ **データ永続化** - CSV形式ローカル保存
 - ✅ **統計表示** - タスク数・完了数表示
 - ✅ **ローディング状態** - 非同期操作の視覚的フィードバック
-
-### 技術的特徴
-- 🏗️ **完全な層分離** - Domain, Application, Infrastructure, Presentation
-- 🧪 **TDD品質保証** - Red-Green-Refactorサイクル
-- ⚛️ **リアクティブUI** - R3による双方向データバインディング
-- 🔧 **開発効率化** - EditorScriptによる自動UI構築
-- 📱 **モバイル対応** - iPhone/AndroidのSafeArea自動対応
-- 🌏 **国際化対応** - 日本語フォント完全対応
 
 ## 📁 プロジェクト構造
 
@@ -203,32 +258,6 @@ UnityCleanArchitechtureTodo/
 ├── Spec.md                   # 詳細仕様書
 └── Task.md                   # 実装タスク管理
 ```
-
-## 🚀 セットアップ
-
-### 必要環境
-- Unity 2022.3 LTS以上
-- .NET Standard 2.1対応
-
-### 依存パッケージ
-```json
-{
-  "dependencies": {
-    "com.cysharp.unitask": "2.5.10",
-    "jp.cysharp.vcontainer": "1.16.9", 
-    "com.cysharp.r3": "1.3.0"
-  }
-}
-```
-
-### 実行方法
-1. Unityプロジェクトを開く
-2. `Assets/Scenes/Main.unity`を開く
-3. Playボタンでアプリ実行
-
-### UI再構築（開発者向け）
-- Unity上部メニュー: `Todo App > Build UI > Build All UI (Complete Setup)`
-- 自動でCanvas、SafeArea、全UI要素が構築されます
 
 ## 🎓 学習ポイント
 
