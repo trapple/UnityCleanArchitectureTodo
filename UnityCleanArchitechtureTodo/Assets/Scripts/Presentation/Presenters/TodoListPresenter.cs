@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using VContainer.Unity;
 using R3;
 using Cysharp.Threading.Tasks;
@@ -90,7 +91,7 @@ namespace UnityCleanArchitectureTodo.Presentation.Presenters
             catch (Exception ex)
             {
                 // エラーハンドリング（今後、エラー表示機能を追加予定）
-                UnityEngine.Debug.LogError($"タスク作成エラー: {ex.Message}");
+                Debug.LogError($"タスク作成エラー: {ex.Message}");
             }
         }
 
@@ -111,7 +112,7 @@ namespace UnityCleanArchitectureTodo.Presentation.Presenters
             catch (Exception ex)
             {
                 // エラーハンドリング
-                UnityEngine.Debug.LogError($"タスク完了切り替えエラー: {ex.Message}");
+                Debug.LogError($"タスク完了切り替えエラー: {ex.Message}");
             }
         }
 
@@ -132,7 +133,7 @@ namespace UnityCleanArchitectureTodo.Presentation.Presenters
             catch (Exception ex)
             {
                 // エラーハンドリング
-                UnityEngine.Debug.LogError($"タスク削除エラー: {ex.Message}");
+                Debug.LogError($"タスク削除エラー: {ex.Message}");
             }
         }
 
@@ -149,7 +150,7 @@ namespace UnityCleanArchitectureTodo.Presentation.Presenters
             catch (Exception ex)
             {
                 // エラーハンドリング
-                UnityEngine.Debug.LogError($"タスク読み込みエラー: {ex.Message}");
+                Debug.LogError($"タスク読み込みエラー: {ex.Message}");
             }
         }
 
