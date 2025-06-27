@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityCleanArchitectureTodo.Infra;
 using UnityCleanArchitectureTodo.Presentation.Views;
+using UnityCleanArchitectureTodo.Presentation.UI;
 
 namespace UnityCleanArchitectureTodo.Editor
 {
@@ -47,6 +48,19 @@ namespace UnityCleanArchitectureTodo.Editor
             if (GUILayout.Button("Build All UI (Complete Setup)", GUILayout.Height(40)))
             {
                 BuildAllUI();
+            }
+
+            GUILayout.Space(10);
+            GUILayout.Label("Safe Area", EditorStyles.boldLabel);
+            if (GUILayout.Button("Add SafeAreaHandler to Canvas", GUILayout.Height(30)))
+            {
+                AddSafeAreaToCanvas();
+            }
+
+            GUILayout.Space(5);
+            if (GUILayout.Button("Remove SafeAreaHandler from Canvas", GUILayout.Height(30)))
+            {
+                RemoveSafeAreaFromCanvas();
             }
 
             GUILayout.Space(10);
@@ -132,6 +146,14 @@ namespace UnityCleanArchitectureTodo.Editor
                 scaler.referenceResolution = new Vector2(1920, 1080);
                 scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
                 scaler.matchWidthOrHeight = 0.5f;
+            }
+
+            // SafeAreaHandler追加
+            var safeAreaHandler = canvas.GetComponent<SafeAreaHandler>();
+            if (safeAreaHandler == null)
+            {
+                safeAreaHandler = canvas.gameObject.AddComponent<SafeAreaHandler>();
+                Debug.Log("[TodoUIBuilder] SafeAreaHandler added to Canvas.");
             }
         }
 
@@ -765,6 +787,60 @@ namespace UnityCleanArchitectureTodo.Editor
             }
 
             Debug.Log("[TodoUIBuilder] Scene reset completed.");
+        }
+
+        /// <summary>
+        /// CanvasにSafeAreaHandlerを追加
+        /// </summary>
+        public static void AddSafeAreaToCanvas()
+        {
+            Debug.Log("[TodoUIBuilder] Adding SafeAreaHandler to Canvas...");
+
+            var canvas = FindObjectOfType<Canvas>();
+            if (canvas == null)
+            {
+                Debug.LogError("[TodoUIBuilder] Canvas not found! Please setup Main Scene first.");
+                return;
+            }
+
+            var safeAreaHandler = canvas.GetComponent<SafeAreaHandler>();
+            if (safeAreaHandler != null)
+            {
+                Debug.Log("[TodoUIBuilder] SafeAreaHandler already exists on Canvas.");
+                return;
+            }
+
+            safeAreaHandler = canvas.gameObject.AddComponent<SafeAreaHandler>();
+            EditorUtility.SetDirty(canvas.gameObject);
+            
+            Debug.Log("[TodoUIBuilder] SafeAreaHandler added to Canvas successfully.");
+        }
+
+        /// <summary>
+        /// CanvasからSafeAreaHandlerを削除
+        /// </summary>
+        public static void RemoveSafeAreaFromCanvas()
+        {
+            Debug.Log("[TodoUIBuilder] Removing SafeAreaHandler from Canvas...");
+
+            var canvas = FindObjectOfType<Canvas>();
+            if (canvas == null)
+            {
+                Debug.LogError("[TodoUIBuilder] Canvas not found!");
+                return;
+            }
+
+            var safeAreaHandler = canvas.GetComponent<SafeAreaHandler>();
+            if (safeAreaHandler == null)
+            {
+                Debug.Log("[TodoUIBuilder] SafeAreaHandler not found on Canvas.");
+                return;
+            }
+
+            DestroyImmediate(safeAreaHandler);
+            EditorUtility.SetDirty(canvas.gameObject);
+            
+            Debug.Log("[TodoUIBuilder] SafeAreaHandler removed from Canvas successfully.");
         }
     }
 }
