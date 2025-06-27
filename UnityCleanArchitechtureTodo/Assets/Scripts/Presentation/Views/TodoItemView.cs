@@ -14,18 +14,18 @@ namespace UnityCleanArchitectureTodo.Presentation.Views
     public class TodoItemView : MonoBehaviour
     {
         [Header("Text Components")] [SerializeField]
-        private TextMeshProUGUI _titleText;
+        private TextMeshProUGUI _titleText = null!;
 
-        [SerializeField] private TextMeshProUGUI _descriptionText;
-        [SerializeField] private TextMeshProUGUI _createdAtText;
+        [SerializeField] private TextMeshProUGUI _descriptionText = null!;
+        [SerializeField] private TextMeshProUGUI _createdAtText = null!;
 
         [Header("Interactive Components")] [SerializeField]
-        private Toggle _completedToggle;
+        private Toggle _completedToggle = null!;
 
-        [SerializeField] private Button _deleteButton;
+        [SerializeField] private Button _deleteButton = null!;
 
         [Header("Visual States")] [SerializeField]
-        private GameObject _completedOverlay;
+        private GameObject _completedOverlay = null!;
 
         [SerializeField] private Color _completedTextColor = Color.gray;
         [SerializeField] private Color _normalTextColor = Color.black;
@@ -34,6 +34,11 @@ namespace UnityCleanArchitectureTodo.Presentation.Views
         private Action<string> _onToggleComplete;
         private Action<string> _onDelete;
         private readonly CompositeDisposable _disposables = new();
+
+        private void Awake()
+        {
+            ValidateSerializedFields();
+        }
 
         /// <summary>
         /// TodoItemViewを初期化し、イベントコールバックを設定
@@ -87,18 +92,13 @@ namespace UnityCleanArchitectureTodo.Presentation.Views
         /// </summary>
         private void UpdateTexts()
         {
-            if (_titleText != null)
-                _titleText.text = _currentTask.Title;
+            _titleText.text = _currentTask.Title;
 
-            if (_descriptionText != null)
-            {
-                _descriptionText.text = string.IsNullOrEmpty(_currentTask.Description)
-                    ? "説明なし"
-                    : _currentTask.Description;
-            }
+            _descriptionText.text = string.IsNullOrEmpty(_currentTask.Description)
+                ? ""
+                : _currentTask.Description;
 
-            if (_createdAtText != null)
-                _createdAtText.text = _currentTask.CreatedAt.ToString("yyyy/MM/dd HH:mm");
+            _createdAtText.text = _currentTask.CreatedAt.ToString("yyyy/MM/dd HH:mm");
         }
 
         /// <summary>
@@ -106,11 +106,8 @@ namespace UnityCleanArchitectureTodo.Presentation.Views
         /// </summary>
         private void UpdateCompletionState()
         {
-            if (_completedToggle != null)
-            {
-                // イベント発火を一時的に無効化
-                _completedToggle.SetIsOnWithoutNotify(_currentTask.IsCompleted);
-            }
+            // イベント発火を一時的に無効化
+            _completedToggle.SetIsOnWithoutNotify(_currentTask.IsCompleted);
         }
 
         /// <summary>
@@ -119,25 +116,17 @@ namespace UnityCleanArchitectureTodo.Presentation.Views
         private void UpdateVisualState()
         {
             // 完了オーバーレイの表示/非表示
-            if (_completedOverlay != null)
-                _completedOverlay.SetActive(_currentTask.IsCompleted);
+            _completedOverlay.SetActive(_currentTask.IsCompleted);
 
             // テキストカラーの変更
             Color textColor = _currentTask.IsCompleted ? _completedTextColor : _normalTextColor;
-
-            if (_titleText != null)
-                _titleText.color = textColor;
-
-            if (_descriptionText != null)
-                _descriptionText.color = textColor;
+            _titleText.color = textColor;
+            _descriptionText.color = textColor;
 
             // 完了時のテキスト装飾（打ち消し線など）
-            if (_titleText != null)
-            {
-                _titleText.fontStyle = _currentTask.IsCompleted
-                    ? FontStyles.Strikethrough
-                    : FontStyles.Normal;
-            }
+            _titleText.fontStyle = _currentTask.IsCompleted
+                ? FontStyles.Strikethrough
+                : FontStyles.Normal;
         }
 
         /// <summary>
@@ -146,20 +135,14 @@ namespace UnityCleanArchitectureTodo.Presentation.Views
         private void BindEvents()
         {
             // 完了切り替えToggle
-            if (_completedToggle != null)
-            {
-                _completedToggle.onValueChanged.AsObservable()
-                    .Subscribe(OnToggleChanged)
-                    .AddTo(_disposables);
-            }
+            _completedToggle.onValueChanged.AsObservable()
+                .Subscribe(OnToggleChanged)
+                .AddTo(_disposables);
 
             // 削除ボタン
-            if (_deleteButton != null)
-            {
-                _deleteButton.onClick.AsObservable()
-                    .Subscribe(_ => OnDeleteClicked())
-                    .AddTo(_disposables);
-            }
+            _deleteButton.onClick.AsObservable()
+                .Subscribe(_ => OnDeleteClicked())
+                .AddTo(_disposables);
         }
 
         /// <summary>
@@ -206,6 +189,30 @@ namespace UnityCleanArchitectureTodo.Presentation.Views
             Debug.Log($"IsCompleted: {_currentTask.IsCompleted}");
             Debug.Log($"CreatedAt: {_currentTask.CreatedAt}");
             Debug.Log($"CompletedAt: {_currentTask.CompletedAt}");
+        }
+
+        /// <summary>
+        /// SerializedFieldのnullチェック
+        /// </summary>
+        private void ValidateSerializedFields()
+        {
+            if (_titleText == null)
+                throw new NullReferenceException($"[{gameObject.name}] _titleText is null! Please assign the TitleText component in the inspector.");
+
+            if (_descriptionText == null)
+                throw new NullReferenceException($"[{gameObject.name}] _descriptionText is null! Please assign the DescriptionText component in the inspector.");
+
+            if (_createdAtText == null)
+                throw new NullReferenceException($"[{gameObject.name}] _createdAtText is null! Please assign the CreatedAtText component in the inspector.");
+
+            if (_completedToggle == null)
+                throw new NullReferenceException($"[{gameObject.name}] _completedToggle is null! Please assign the CompletedToggle component in the inspector.");
+
+            if (_deleteButton == null)
+                throw new NullReferenceException($"[{gameObject.name}] _deleteButton is null! Please assign the DeleteButton component in the inspector.");
+
+            if (_completedOverlay == null)
+                throw new NullReferenceException($"[{gameObject.name}] _completedOverlay is null! Please assign the CompletedOverlay GameObject in the inspector.");
         }
 
         private void OnDestroy()

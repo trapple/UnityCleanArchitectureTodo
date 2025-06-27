@@ -127,16 +127,45 @@ Spec.md 7.2推奨実装順序に基づく進捗管理
 
 ## 6. UI構築
 
-- ⬜ Scene設定
-- ⬜ Prefab作成
-- ⬜ UI配置
+### 6.1 Scene設定
+- ⏳ Main.unity Scene確認・設定
+  - ⬜ Canvas作成（Screen Space - Overlay）
+  - ⬜ RootLifetimeScope GameObject配置
+  - ⬜ EventSystem確認・設定
+
+### 6.2 UI Prefab作成
+- ⬜ TodoItemView Prefab作成
+  - ⬜ タイトル・説明テキスト（TextMeshPro）
+  - ⬜ 完了チェックToggle
+  - ⬜ 削除Button
+  - ⬜ TodoItemViewスクリプト割り当て
+  - ⬜ 完了時の視覚効果設定（色変更・打ち消し線）
+
+### 6.3 メインUI配置
+- ⬜ TodoListView GameObject作成・配置
+  - ⬜ 新規タスク入力エリア
+    - ⬜ タイトル入力（TMP_InputField）
+    - ⬜ 説明入力（TMP_InputField）
+    - ⬜ 追加Button
+  - ⬜ タスクリスト表示エリア
+    - ⬜ Scroll View設定
+    - ⬜ Content Transform（TodoItemView生成親）
+  - ⬜ ローディング表示GameObject
+  - ⬜ 統計情報表示（タスク数等）
+  - ⬜ TodoListViewスクリプト割り当て
+
+### 6.4 UI接続・動作確認
+- ⬜ VContainer DI接続確認
+- ⬜ ReactiveProperty UIバインディング確認
+- ⬜ CRUD操作動作確認
+- ⬜ データ永続化確認
 
 ---
 
 ## 現在の状況
-- **現在地**: 5. DI設定の実装 → 完了🎉
-- **次のタスク**: 6. UI構築（Scene設定・Prefab作成・UI配置）
-- **TDDフェーズ**: Clean Architecture全層完成🎉 → Scene構築・UI配置
+- **現在地**: 6. UI構築 → 進行中⏳
+- **次のタスク**: 6.1 Scene設定（Canvas・RootLifetimeScope配置）
+- **TDDフェーズ**: Clean Architecture全層完成🎉 → UI構築・動作確認
 - **実装済み**: Clean Architecture全層完成（Domain, App, Infra, Presentation: MVVM + UI + DI）
 
 ## 凡例
